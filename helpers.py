@@ -2,7 +2,7 @@ def youtube_api():
 
     # de link van nummer uit de database pakken
 
-    # alleen de belangrijke shit van de link pakken (alles achter de /wathc?v=)
+    # alleen de belangrijke shit van de link pakken (alles achter de /watch?v=)
 
     # deze code doorsturen naar database
     return None
