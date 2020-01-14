@@ -1,2 +1,1 @@
-# webik
-# pussy ni
+love u
