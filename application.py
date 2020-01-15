@@ -159,11 +159,19 @@ def logout():
     # Redirect user to login form
     return redirect("/")
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def general_homepage():
 # shows the homepage when users aren’t logged in
 # return naar log in and register
-    return render_template("general_homepage.html")
+    if request.method == "POST":
+        if request.form['button'] == 'register':
+            return render_template("register.html")
+        else:
+            return render_template("login.html")
+
+
+    else:
+        return render_template("general_homepage.html")
 
 @app.route("/timeline", methods=["GET", "POST"])
 @login_required

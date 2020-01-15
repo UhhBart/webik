@@ -1,13 +1,24 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<head>
+{% block title %}
+    General homepage
+{% endblock %}
 
-</head>
+{% block main %}
+    <head>
 
-<body>
-    <p>General homepage</p>
-    <form class="form" action= "/" method="post" name="general_homepage">
-        <button class="btn btn-primary" type="submit">Register</button>
-        <button class="btn btn-primary" type="submit">Log in</button>
-    </form>
-</body>
+    </head>
+    <body>
+        <div>
+            <p><h1 align="center" color=black>Welcome on VibeCheck!</h1></p>
+        </div>
+        <div>
+            <p><h5 align="center" color=black>Discover new playlists!</h5></p>
+        </div>
+        <form class="form" action= "/" method="post" name="general_homepage">
+            <button class="btn btn-success" type="submit" name="button" value="register">Register</button>
+            <p> </p>
+            <button class="btn btn-success" type="submit" name="button" value="login">Log in</button>
+        </form>
+    </body>
+{% endblock %}
