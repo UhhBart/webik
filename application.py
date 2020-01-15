@@ -178,6 +178,7 @@ def timeline():
 @login_required
 def create():
 # creating a new group/playlist
+# return group profile
     return None
 
 @app.route("/group_profile")
