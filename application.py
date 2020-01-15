@@ -37,12 +37,13 @@ db = SQL("sqlite:///project.db")
 def register():
     """Register user"""
 
+    return render_template("register.html")
     if request.method == "POST":
 
         password = request.form.get("password")
         username = request.form.get("username")
         confirm_password = request.form.get("confirm_password")
-        return render_template("register.html")
+
 
 # AL DEZE DINGEN MOETEN EIGENLIJK VIA JAVASCRIPT ####################################
         # make sure the user put in a username
