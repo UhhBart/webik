@@ -13,7 +13,7 @@
         <div>
             <p><h3 align="center" color="#ff0000">Register for a brand new VibeCheck account here!</h3></p>
         </div>
-        <form id="form" action= "/" method="POST" name="register" >
+        <form id="form" action= "/register" method="POST" name="register" >
             <div>
                 <p align="left"><strong>Username</strong></p>
                 <input class="field" id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" required>
@@ -32,8 +32,12 @@
             <div>
                 <input class= "btn btn-success" type="submit" value="Register!">
             </div>
+            <br>
+            <div>
+               Already have an account? <br><a href= "login">Log in here!</a>
+            </div>
         </form>
-
+    </body>
 <script>
 const username = document.getElementById("username");
 const password = document.getElementById("password");

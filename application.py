@@ -37,7 +37,6 @@ db = SQL("sqlite:///project.db")
 def register():
     """Register user"""
 
-    return render_template("register.html")
     if request.method == "POST":
 
         password = request.form.get("password")

@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+<<<<<<< HEAD
 
 {% block title %}
     General homepage
@@ -21,4 +22,39 @@
             <button class="btn btn-success" type="submit" name="button" value="login">Log in</button>
         </form>
     </body>
+=======
+
+<!DOCTYPE html>
+
+{% block title %}
+    Login
+{% endblock %}
+    <head>
+
+    </head>
+{% block main %}
+
+   <body>
+        <a class="btn btn-primary" href="/register" role="button">Register</a>
+   </body>
+
+<script>
+const username = document.getElementById("username");
+const password = document.getElementById("password");
+const form = document.getElementById("form");
+
+form.addEventListener("submit", function(error) {
+    if (username.value == ""){
+        error.preventDefault();
+        username.style.borderColor = "red";
+        alert("Please enter your username");
+    }
+    else if (password.value == ""){
+        error.preventDefault();
+        password.style.borderColor = "red";
+        alert("Please enter your password!");
+    }
+});
+</script>
+>>>>>>> 381d9c146501d30c5228dade9a430fcd9a87ef64
 {% endblock %}
