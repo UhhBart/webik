@@ -1,3 +1,12 @@
+.form
+{
+    /* center form controls */
+    display: inline-block;
+
+    /* override Bootstrap's 100% width for form controls */
+    width: auto;
+}
+
 nav .navbar-brand
 {
     /* size for brand */
@@ -14,14 +23,7 @@ nav .navbar-brand .blue
     color: #537fbe;
 }
 
-main .form-control
-{
-    /* center form controls */
-    display: inline-block;
 
-    /* override Bootstrap's 100% width for form controls */
-    width: auto;
-}
 
 main
 {
