@@ -162,9 +162,9 @@ def logout():
 def general_homepage():
 # shows the homepage when users aren’t logged in
 # return naar log in and register
-    return None
+    return render_template("general_homepage.html")
 
-@app.route("/timeline")
+@app.route("/timeline", methods=["GET", "POST"])
 @login_required
 def timeline():
 # shows the homepage for logged in users
@@ -178,6 +178,7 @@ def timeline():
 @login_required
 def create():
 # creating a new group/playlist
+# return group profile
     return None
 
 @app.route("/group_profile")
@@ -210,7 +211,10 @@ def results():
 # return to a specific group profile, from here the user can follow this group, so returns to /group_profile
     return None
 
-
+@app.route("/follow", method = ["GET"])
+def follow():
+#information that user follows a group in database
+    return None
 
 # copied from finance
 def errorhandler(e):
