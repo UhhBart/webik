@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+<!DOCTYPE html>
+
+{% block title %}
+    Register
+{% endblock %}
+    <head>
+
+    </head>
+{% block main %}
+    <body>
+        <p align="center">You can register for a brand new account here!</p>
+        <form action= "/" method="POST" name="register" >
+            <div>
+                <input class="field" id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" required>
+            </div>
+            <br>
+            <div>
+                <input class="field" id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password" required>
+            </div>
+            <br>
+            <div>
+                <input class= "btn btn-success" type="submit" value="Submit">
+            </div>
+        </form>
+{% endblock %}

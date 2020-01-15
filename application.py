@@ -211,7 +211,7 @@ def results():
 # return to a specific group profile, from here the user can follow this group, so returns to /group_profile
     return None
 
-@app.route("/follow", method = ["GET"])
+@app.route("/follow", methods = ["GET"])
 def follow():
 #information that user follows a group in database
     return None
