@@ -9,15 +9,18 @@ from functools import wraps
 
 def youtube_api():
     db = SQL("sqlite:///project.db")
-    # de link van nummer uit de database pakken
+
+    # getting the link from the database
     link = db.execute("SELECT NUMMER FROM numbers_link WHERE id=:user_id")
 
+    # only getting the key of the song (everything behind the /watch?v=)
+    key = link.split("=")
+
+    # adding the key into the database
+    db.execute("INSERT into key  ")
 
 
 
-    # alleen de belangrijke shit van de link pakken (alles achter de /watch?v=)
-
-    # deze code doorsturen naar database
     return None
 
 
