@@ -44,7 +44,6 @@ def register():
         confirm_password = request.form.get("confirm_password")
 
 
-# AL DEZE DINGEN MOETEN EIGENLIJK VIA JAVASCRIPT ####################################
         # make sure the user put in a username
         if not username:
             return render_template("apology.html", message = "Please enter your new username." )
@@ -65,7 +64,7 @@ def register():
         db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
                    username=request.form.get("username"), hash=generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
 
-        return redirect("/")
+        return redirect("/login.html")
 
     else:
         return render_template("register.html")
@@ -114,7 +113,6 @@ def change_password():
 def login():
     """Log user in"""
 
-    return render_template("login.html")
     # Forget any user_id
     session.clear()
 
@@ -141,7 +139,7 @@ def login():
         session["user_id"] = rows[0]["id"]
 
         # Redirect user to home page
-        return redirect("/")
+        return redirect("/timeline")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -180,7 +178,7 @@ def timeline():
 
 # returns to /create
 # returns to /group_profile from all the groups that the user follows
-    return None
+    return render_template("timeline.html")
 
 @app.route("/create")
 @login_required
@@ -224,14 +222,14 @@ def follow():
 #information that user follows a group in database
     return None
 
-# copied from finance
-def errorhandler(e):
-    """Handle error"""
-    if not isinstance(e, HTTPException):
-        e = InternalServerError()
-    return render_template("apology.html", message = "" )(e.name, e.code)
+# # copied from finance
+# def errorhandler(e):
+#     """Handle error"""
+#     if not isinstance(e, HTTPException):
+#         e = InternalServerError()
+#         return render_template("apology.html", message = "" )(e.name, e.code)
 
 
-# Listen for errors
-for code in default_exceptions:
-    app.errorhandler(code)(errorhandler)
+# # Listen for errors
+# for code in default_exceptions:
+#     app.errorhandler(code)(errorhandler)

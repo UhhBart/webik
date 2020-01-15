@@ -17,27 +17,8 @@
         </div>
         <form class="form" action= "/" method="post" name="general_homepage">
             <button class="btn btn-success" type="submit" name="button" value="register">Register</button>
-            <p> </p>
+            <p></p>
             <button class="btn btn-success" type="submit" name="button" value="login">Log in</button>
         </form>
     </body>
-
-<script>
-const username = document.getElementById("username");
-const password = document.getElementById("password");
-const form = document.getElementById("form");
-
-form.addEventListener("submit", function(error) {
-    if (username.value == ""){
-        error.preventDefault();
-        username.style.borderColor = "red";
-        alert("Please enter your username");
-    }
-    else if (password.value == ""){
-        error.preventDefault();
-        password.style.borderColor = "red";
-        alert("Please enter your password!");
-    }
-});
-</script>
 {% endblock %}
