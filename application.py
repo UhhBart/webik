@@ -216,7 +216,6 @@ def follow():
 #information that user follows a group in database
     return None
 
-
 # copied from finance
 def errorhandler(e):
     """Handle error"""
