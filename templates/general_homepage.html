@@ -1,13 +1,35 @@
+{% extends "layout.html" %}
+
 <!DOCTYPE html>
 
-<head>
+{% block title %}
+    Login
+{% endblock %}
+    <head>
 
-</head>
+    </head>
+{% block main %}
 
-<body>
-    <p>General homepage</p>
-    <form class="form" action= "/" method="post" name="general_homepage">
-        <button class="btn btn-primary" type="submit">Register</button>
-        <button class="btn btn-primary" type="submit">Log in</button>
-    </form>
-</body>
+   <body>
+        <a class="btn btn-primary" href="/register" role="button">Register</a>
+   </body>
+
+<script>
+const username = document.getElementById("username");
+const password = document.getElementById("password");
+const form = document.getElementById("form");
+
+form.addEventListener("submit", function(error) {
+    if (username.value == ""){
+        error.preventDefault();
+        username.style.borderColor = "red";
+        alert("Please enter your username");
+    }
+    else if (password.value == ""){
+        error.preventDefault();
+        password.style.borderColor = "red";
+        alert("Please enter your password!");
+    }
+});
+</script>
+{% endblock %}
