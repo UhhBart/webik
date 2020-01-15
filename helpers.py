@@ -1,14 +1,19 @@
 import requests
 import urllib.parse
 import os
+from cs50 import SQL
 
 
 from flask import redirect, render_template, request, session
 from functools import wraps
 
 def youtube_api():
-
+    db = SQL("sqlite:///project.db")
     # de link van nummer uit de database pakken
+    link = db.execute("SELECT NUMMER FROM numbers_link WHERE id=:user_id")
+
+
+
 
     # alleen de belangrijke shit van de link pakken (alles achter de /watch?v=)
 
