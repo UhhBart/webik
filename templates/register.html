@@ -10,22 +10,51 @@
     </head>
 {% block main %}
     <body>
-        <p align="center">You can register for a brand new account here!</p>
-        <form action= "/" method="POST" name="register" >
+        <div>
+            <p><h3 align="center" color="#ff0000">Register for a brand new VibeCheck account here!</h3></p>
+        </div>
+        <form id="form" action= "/" method="POST" name="register" >
             <div>
+                <p align="left"><strong>Username</strong></p>
                 <input class="field" id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" required>
             </div>
             <br>
             <div>
+                <p align="left"><strong>Password</strong><br>(Must be at least 8 characters long)</p>
                 <input class="field" id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password" required>
             </div>
             <br>
             <div>
-                <input class="field" id="rcorner" id="confirm_password" name="confirm_password" type="password" autocomplete="off" placeholder="Repeat your password" required>
+                <p align="left"><strong>Confirm password</strong></p>
+                <input class="field" id="confirm_password" name="confirm_password" type="password" autocomplete="off" placeholder="Repeat your password" required>
             </div>
             <br>
             <div>
                 <input class= "btn btn-success" type="submit" value="Register!">
             </div>
         </form>
+
+<script>
+const username = document.getElementById("username");
+const password = document.getElementById("password");
+const confirm_password = document.getElementById("confirm_password");
+const form = document.getElementById("form");
+
+form.addEventListener("submit", function(error) {
+    if (username.value == ""){
+        error.preventDefault();
+        alert("Please enter your username");
+    }
+    else if (password.value.length < 8){
+        error.preventDefault();
+        password.style.borderColor = "red";
+        alert("Make sure your password is at least 8 characters");
+    }
+    else if (password.value != confirm_password.value){
+        error.preventDefault();
+        confirm_password.style.borderColor = "red";
+        alert("Passwords don't match");
+    }
+});
+</script>
 {% endblock %}

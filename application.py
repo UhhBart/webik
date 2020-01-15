@@ -115,6 +115,7 @@ def change_password():
 def login():
     """Log user in"""
 
+    return render_template("login.html")
     # Forget any user_id
     session.clear()
 
