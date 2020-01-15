@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import login_required
+from helpers import login_required, youtube_api
 
 # Configure application
 app = Flask(__name__)
@@ -30,7 +30,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-#db = SQL("sqlite:///finance.db")
+db = SQL("sqlite:///project.db")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -156,6 +156,59 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
+
+@app.route("/")
+def general_homepage():
+# shows the homepage when users aren’t logged in
+# return naar log in and register
+    return None
+
+@app.route("/timeline")
+@login_required
+def timeline():
+# shows the homepage for logged in users
+# shows playlists  the user follows(with added number)
+
+# returns to /create
+# returns to /group_profile from all the groups that the user follows
+    return None
+
+@app.route("/create")
+@login_required
+def create():
+# creating a new group/playlist
+    return None
+
+@app.route("/group_profile")
+def group_profile():
+# shows the playlist of that group
+# add numbers if you are member of that group
+# shows the users of that group (short description)
+# includes a button for following a group
+
+#return to /add_number
+    return None
+
+@app.route("/add_number")
+@login_required
+def add_number():
+# add a number to a playlist
+# only when that user is a member of that group
+    return None
+
+@app.route("/search")
+def search():
+# this is a searchpage to look for new groups/ playlists
+# based on a users input
+# return to results
+    return None
+
+@app.route("/results")
+def results():
+# shows the results based on the users input in search
+# return to a specific group profile, from here the user can follow this group, so returns to /group_profile
+    return None
+
 
 
 # copied from finance
