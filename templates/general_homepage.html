@@ -1,15 +1,14 @@
 {% extends "layout.html" %}
-<<<<<<< HEAD
+
+<!DOCTYPE html>
 
 {% block title %}
-    General homepage
+    Login
 {% endblock %}
 
 {% block main %}
-    <head>
 
-    </head>
-    <body>
+   <body>
         <div>
             <p><h1 align="center" color=black>Welcome on VibeCheck!</h1></p>
         </div>
@@ -22,21 +21,6 @@
             <button class="btn btn-success" type="submit" name="button" value="login">Log in</button>
         </form>
     </body>
-=======
-
-<!DOCTYPE html>
-
-{% block title %}
-    Login
-{% endblock %}
-    <head>
-
-    </head>
-{% block main %}
-
-   <body>
-        <a class="btn btn-primary" href="/register" role="button">Register</a>
-   </body>
 
 <script>
 const username = document.getElementById("username");
@@ -56,5 +40,4 @@ form.addEventListener("submit", function(error) {
     }
 });
 </script>
->>>>>>> 381d9c146501d30c5228dade9a430fcd9a87ef64
 {% endblock %}
