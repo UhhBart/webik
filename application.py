@@ -30,7 +30,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///finance.db")
+#db = SQL("sqlite:///finance.db")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -42,7 +42,7 @@ def register():
         password = request.form.get("password")
         username = request.form.get("username")
         confirm_password = request.form.get("confirm_password")
-
+        return render_template("register.html")
 
 # AL DEZE DINGEN MOETEN EIGENLIJK VIA JAVASCRIPT ####################################
         # make sure the user put in a username
