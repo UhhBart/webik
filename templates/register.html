@@ -5,30 +5,28 @@
 {% block title %}
     Register
 {% endblock %}
-
-{% block main %}
     <head>
 
     </head>
-
+{% block main %}
     <body>
-        <p>Register page</p>
-        <form action= "/" method="POST" name="register">
+        <p align="center">You can register for a brand new account here!</p>
+        <form action= "/" method="POST" name="register" >
             <div>
-                <input class="form" id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" required>
+                <input class="field" id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" required>
             </div>
             <br>
             <div>
-                <input class="form" id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password" required>
+                <input class="field" id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password" required>
             </div>
             <br>
             <div>
-                <input class="form" id="confirm_password" name="confirm_password" type="password" autocomplete="off" placeholder="Repeat your password" required>
+                <input class="field" id="rcorner" id="confirm_password" name="confirm_password" type="password" autocomplete="off" placeholder="Repeat your password" required>
             </div>
             <br>
             <div>
                 <input class= "btn btn-success" type="submit" value="Submit">
             </div>
+            <div class="yellow-square"></div>
         </form>
-    </body>
 {% endblock %}
