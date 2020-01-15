@@ -1,26 +1,34 @@
+{% extends "layout.html" %}
+
 <!DOCTYPE html>
 
-<head>
+{% block title %}
+    Register
+{% endblock %}
 
-</head>
+{% block main %}
+    <head>
 
-<body>
-    <p>Register page</p>
-    <form class="form" action= "/" method="POST" name="register">
-        <div>
-            <input id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" required>
-        </div>
-        <br>
-        <div>
-            <input id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password" required>
-        </div>
-        <br>
-        <div>
-            <input id="confirm_password" name="confirm_password" type="password" autocomplete="off" placeholder="Repeat your password" required>
-        </div>
-        <br>
-        <div>
-            <input type="submit" value="Submit">
-        </div>
-    </form>
-</body>
+    </head>
+
+    <body>
+        <p>Register page</p>
+        <form action= "/" method="POST" name="register">
+            <div>
+                <input class="form" id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" required>
+            </div>
+            <br>
+            <div>
+                <input class="form" id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password" required>
+            </div>
+            <br>
+            <div>
+                <input class="form" id="confirm_password" name="confirm_password" type="password" autocomplete="off" placeholder="Repeat your password" required>
+            </div>
+            <br>
+            <div>
+                <input class= "btn btn-success" type="submit" value="Submit">
+            </div>
+        </form>
+    </body>
+{% endblock %}
