@@ -11,8 +11,8 @@
         <!-- documentation at http://getbootstrap.com/docs/4.1/, alternative themes at https://bootswatch.com/ -->
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 
-        <!-- https://favicon.io/emoji-favicons/money-mouth-face/ -->
-        <link href="/static/favicon.ico" rel="icon">
+        <!--LOGO IS NOT OURS, WE LITERALLY STOLE IT-->
+        <link href="/static/logo.png" rel="icon">
 
         <link href="/static/styles.css" rel="stylesheet">
 
@@ -25,24 +25,47 @@
     </head>
 
     <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
 
+    <!--LOGO IS NOT OURS, WE LITERALLY STOLE IT-->
+    <img src="/static/logo.png" width="30" height="30" alt="">
+    <a class="navbar-brand" href="/">Vibecheck</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="https://soundcloud.com/haardtek/ubiquitous-surveyor-w-dietrich">THIS SHIT FUCKIN SLAPS BOIIII</a>
+      </li>
+
+
+      <!--<li class="nav-item dropdown">-->
+      <!--  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+      <!--    Dropdown-->
+      <!--  </a>-->
+      <!--  <div class="dropdown-menu" aria-labelledby="navbarDropdown">-->
+      <!--    <a class="dropdown-item" href="#">Action</a>-->
+      <!--    <a class="dropdown-item" href="#">Another action</a>-->
+      <!--    <div class="dropdown-divider"></div>-->
+      <!--    <a class="dropdown-item" href="#">Something else here</a>-->
+      <!--  </div>-->
+      <!--</li>-->
+
+
+      <!--<li class="nav-item">-->
+      <!--  <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
+      <!--</li>-->
+    </ul>
+    <ul class="navbar-nav ml-auto mt-2">
+        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+    </ul>
+  </div>
+</nav>
         {% if session.user_id %}
-             <nav class="navbar navbar-expand-md navbar-light bg-light">
-            <a class="navbar-brand" href="/"></span><span class="blue">VibeCheck</span></a>
-            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbar">
-                    <ul class="navbar-nav mr-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/quote">Quote</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/buy">Buy</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/sell">Sell</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
-                    </ul>
-                    <ul class="navbar-nav ml-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/change_password">Change password</a></li>
-                    </ul>
+
                 {% endif %}
             </div>
         </nav>
