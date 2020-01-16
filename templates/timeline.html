@@ -10,9 +10,8 @@
     </head>
 {% block main %}
     <body>
-        <div class="text-center">
-        <button id="third_btn"class="btn btn-success btn-lg" type="submit" name="button" value="create">Create group</button>
-        <br>
-
+        <form class="form" action= "/create" method="get" name="create">
+            <button class="btn btn-success" type="submit" name="button" value="create">Create group</button>
+        </form>
     </body>
 {% endblock %}
