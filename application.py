@@ -173,19 +173,41 @@ def general_homepage():
 @app.route("/timeline", methods=["GET", "POST"])
 @login_required
 def timeline():
+
 # shows the homepage for logged in users
 # shows playlists  the user follows(with added number)
 
 # returns to /create
 # returns to /group_profile from all the groups that the user follows
-    return render_template("timeline.html")
 
-@app.route("/create")
+    if request.method == "POST":
+        if request.form['button'] == 'create':
+            return render_template("create.html")
+        if request.form['button'] == 'following':
+            return render_template("follow.html")
+        else:
+            return render_template("search.html")
+    else:
+
+        return render_template("timeline.html")
+
+@app.route("/create", methods=["GET", "POST"])
 @login_required
 def create():
 # creating a new group/playlist
 # return group profile
-    return None
+    if request.method == "POST":
+        db.execute("INSERT INTO groups (group_name, name_playlist, description) VALUES(:group_name, :name_playlist, :description)",
+                   group_name=request.form.get("group_name"),
+                   name_playlist=request.form.get("playlist"),
+                   description=request.form.get("description"))
+        return render_template("general_homepage.html")
+
+
+
+
+    else:
+        return render_template("create.html")
 
 @app.route("/group_profile")
 def group_profile():

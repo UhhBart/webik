@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+<!DOCTYPE html>
+
+{% block title %}
+    Create group
+{% endblock %}
+
+{% block main %}
+    <body>
+        <div>
+            <p><h1 align="center" color=black>Create a new Group!</h1></p>
+        </div>
+        <form id="form" action= "/create" method="POST" name="create" >
+            <div>
+                <p align="left"><strong>Group name</strong></p>
+                <input class="field" id="group_name" name="group_name" type="text" autocomplete="off" placeholder="Enter a group name" required>
+            </div>
+            <br>
+            <div>
+                <p align="left"><strong>Name playlist</strong></p>
+                <input class="field" id="playlist" name="playlist" type="text" autocomplete="off" placeholder="Enter a playlist name" required>
+            </div>
+            <br>
+            <div>
+                <p align="left"><strong>Group description</strong></p>
+                <input class="field" id="description" name="description" type="text" autocomplete="off" placeholder="Enter a group description" required>
+            </div>
+        </form>
+        <br>
+        <form id="form" action= "/create" method="POST" name="create" >
+            <div>
+                <p align="left"><strong>Group memebers</strong><br>Fill in usernames</p>
+                <input class="field" id="users" name="users" type="text" autocomplete="off" placeholder="Add a user" required>
+                <br>
+                <br>
+                <input class="field" id="users" name="users" type="text" autocomplete="off" placeholder="Add a user" >
+                <br>
+                <br>
+                <input class="field" id="users" name="users" type="text" autocomplete="off" placeholder="Add a user" >
+                <br>
+                <br>
+                <input class="field" id="users" name="users" type="text" autocomplete="off" placeholder="Add a user" >
+                <br>
+                <br>
+                <input class="field" id="users" name="users" type="text" autocomplete="off" placeholder="Add a user" >
+            </div>
+            <br>
+            <div>
+                <button class="btn btn-success" type="submit" name="button" value="continue">Create</button>
+            </div>
+        </form>
+
+
+    </body>
+
+
+{% endblock %}
