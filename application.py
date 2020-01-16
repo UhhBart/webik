@@ -64,7 +64,7 @@ def register():
         db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
                    username=request.form.get("username"), hash=generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
 
-        return redirect("/login.html")
+        return redirect("/timeline")
 
     else:
         return render_template("register.html")
