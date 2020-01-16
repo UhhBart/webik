@@ -197,10 +197,12 @@ def create():
 # creating a new group/playlist
 # return group profile
     if request.method == "POST":
-        db.execute("INSERT INTO groups (group_name, name_playlist, description) VALUES(:group_name, :name_playlist, :description)",
+        db.execute("INSERT INTO groups (group_name, description) VALUES(:group_name, :name_playlist, :description)",
                    group_name=request.form.get("group_name"),
                    name_playlist=request.form.get("playlist"),
                    description=request.form.get("description"))
+
+        db.execute()
         return render_template("general_homepage.html")
 
 
