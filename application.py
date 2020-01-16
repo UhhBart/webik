@@ -203,8 +203,9 @@ def create():
                     users = session["user_id"], \
                     name=request.form.get("playlist"))
 
+        #group_id = db.execute("SELECT id FROM groups WHERE name= :name", name = request.form.get("playlist"))
         #bestaat nog niet maar is voor de sier
-        return render_template("group_profile.html")
+        return render_template("group_profile.html",)
 
 
 
@@ -220,7 +221,10 @@ def group_profile():
 # includes a button for following a group
 
 #return to /add_number
-    return None
+
+    # is informatie nodig van de groep waarop is geklikt
+    # group_information = db.execute("SELECT name, description FROM groups WHERE)
+    return render_template("group_profile.html")
 
 @app.route("/add_number")
 @login_required
