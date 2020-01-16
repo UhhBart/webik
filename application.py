@@ -182,11 +182,8 @@ def timeline():
 
     if request.method == "POST":
         if request.form['button'] == 'create':
-            return render_template("create.html")
-        if request.form['button'] == 'following':
-            return render_template("follow.html")
-        else:
-            return render_template("search.html")
+            return redirect("/create")
+
     else:
 
         return render_template("timeline.html")
@@ -197,13 +194,11 @@ def create():
 # creating a new group/playlist
 # return group profile
     if request.method == "POST":
-        db.execute("INSERT INTO groups (group_name, description) VALUES(:group_name, :name_playlist, :description)",
-                   group_name=request.form.get("group_name"),
+        db.execute("INSERT INTO groups (name_playlist, description) VALUES(:name_playlist, :description)",
                    name_playlist=request.form.get("playlist"),
                    description=request.form.get("description"))
 
-        db.execute()
-        return render_template("general_homepage.html")
+        return render_template("group_profile.html")
 
 
 
