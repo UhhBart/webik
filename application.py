@@ -214,8 +214,6 @@ def create():
         return render_template("group_profile.html")
 
 
-
-
     else:
         return render_template("create.html")
 
@@ -232,12 +230,24 @@ def group_profile():
     # group_information = db.execute("SELECT name, description FROM groups WHERE)
     return render_template("group_profile.html")
 
-@app.route("/add_number")
+@app.route("/add_number", methods=["GET", "POST"])
 @login_required
 def add_number():
 # add a number to a playlist
-# only when that user is a member of that group
-    return None
+    if request.method == "POST":
+
+        # PROBLEEEM, WE HEBBEN NOG GEEN BESCHIKBARE GROUP_ID
+        # add track into database
+        # db.execute("INSERT INTO tracks (group_id, link, user_id) VALUES(:group_id, :link, :user_id)",
+        # group_id = group_id, \
+        # link = request.form.get("youtube"), \
+        # user_id = session["user_id"])
+
+
+        return render_template("group_profile.html")
+
+    else:
+        return render_template("add_number.html")
 
 @app.route("/search")
 def search():
