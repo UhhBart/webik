@@ -9,9 +9,21 @@
 
     </head>
 {% block main %}
-    <body>
-        <form class="form" action= "/create" method="get" name="create">
-            <button class="btn btn-success" type="submit" name="button" value="create">Create group</button>
-        </form>
-    </body>
+
+        {% for link in links %}
+        <div class= "song">
+            <div align="center" color=white>
+                <strong>{{link[0]}} uploaded the following song:</strong>
+            </div>
+            <br>
+            <div align="center">
+                <iframe width="420" height="315"
+                    src="https://www.youtube.com/embed/{{link[1]}}">
+                </iframe>
+            </div>
+            Uploaded at {{link[2]}}
+            </div>
+        <br>
+        {% endfor %}
+
 {% endblock %}
