@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+<!DOCTYPE html>
+
+{% block title %}
+    Groupprofile
+{% endblock %}
+
+{% block main %}
+    <body>
+        <div>
+            <p><h1 align="center" color=black>Group Profile of name</h1></p>
+        </div>
+
+        <form class="form" action= "/group_profile" method="get" name="group_profile">
+            <button class="btn btn-success" type="submit" name="button" value="follow">Follow playlist!</button>
+        </form>
+    </body>
+{% endblock %}
