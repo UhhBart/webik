@@ -11,17 +11,16 @@ def youtube_api():
     db = SQL("sqlite:///project.db")
 
     # getting the link from the database
-    link = db.execute("SELECT youtube FROM groups WHERE id=:user_id")
+    link = db.execute("SELECT link FROM tracks WHERE id=:user_id")
 
-    # only getting the key of the song (everything behind the /watch?v=)
+    # only getting the key of the song (everything behind the /watch?v= and before &list if song is in playlist)
     youtube_key = link.split("=")
+    youtube_key = youtube_key[1].split("&")
 
     # adding the key into the database
-    db.execute("INSERT INTO groups (youtube_key) VALUES (:youtube_key)")
+    # db.execute("INSERT INTO groups (youtube_key) VALUES (:youtube_key)")
 
-
-
-    return None
+    return youtube_key[0]
 
 
     #https://www.youtube.com/watch?v=4fndeDfaWCg     <-- check deze banger
