@@ -193,19 +193,25 @@ def timeline():
 def create():
 # creating a new group/playlist
 # return group profile
+
     if request.method == "POST":
-        db.execute("INSERT INTO groups (name, description) VALUES(:name, :description)",
-                   name=request.form.get("playlist"),
+        #set group into groups
+        db.execute("INSERT INTO groups (group_name, description) VALUES(:group_name, :description)",
+                   group_name=request.form.get("playlist"),
                    description=request.form.get("description"))
 
-        db.execute("UPDATE groups SET users=:users \
-                    WHERE name=:name ", \
-                    users = session["user_id"], \
-                    name=request.form.get("playlist"))
+        # link user en group
+        group_id = db.execute("SELECT group_id FROM groups WHERE group_name= :group_name", group_name = request.form.get("playlist"))
+        for group in group_id:
+            gr_id = group["group_id"]
 
-        #group_id = db.execute("SELECT id FROM groups WHERE name= :name", name = request.form.get("playlist"))
+        db.execute("INSERT INTO group_users (group_id, user_id) VALUES(:group_id, :user_id)",
+                    user_id = session["user_id"], \
+                    group_id = gr_id)
+
+
         #bestaat nog niet maar is voor de sier
-        return render_template("group_profile.html",)
+        return render_template("group_profile.html")
 
 
 
