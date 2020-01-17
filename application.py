@@ -182,7 +182,7 @@ def timeline():
 
     if request.method == "POST":
         if request.form['button'] == 'create':
-            return redirect("/create")
+            return render_template("create.html")
 
     else:
 
@@ -194,10 +194,16 @@ def create():
 # creating a new group/playlist
 # return group profile
     if request.method == "POST":
-        db.execute("INSERT INTO groups (name_playlist, description) VALUES(:name_playlist, :description)",
-                   name_playlist=request.form.get("playlist"),
+        db.execute("INSERT INTO groups (name, description) VALUES(:name, :description)",
+                   name=request.form.get("playlist"),
                    description=request.form.get("description"))
 
+        db.execute("UPDATE groups SET users=:users \
+                    WHERE name=:name ", \
+                    users = session["user_id"], \
+                    name=request.form.get("playlist"))
+
+        #bestaat nog niet maar is voor de sier
         return render_template("group_profile.html")
 
 
