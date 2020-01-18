@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+<!DOCTYPE html>
+
+{% block title %}
+    Upload a song
+{% endblock %}
+
+{% block main %}
+    <body>
+        <div>
+            <p><h1 align="center" color=black>Upload your own song!</h1></p>
+        </div>
+        <form id="form" action= "/upload" method="POST" name="upload" >
+        <div>
+            <p align="left"><strong>Select group</strong></p>
+            <select class = form-control name = "group">
+                <option disabled selected value>Group</option>
+                {% for group in groups%}
+                <option>{{group[0]["group_name"]}}</option>
+                {% endfor %}
+            </select>
+        <br>
+        </div>
+            <div>
+                <p align="left"><strong>Link to your song</strong></p>
+                <input class="field" id="link" name="link" type="text" autocomplete="off" placeholder="Enter a youtube link" required>
+            </div>
+
+            <br>
+
+            <div>
+                <p align="left"><strong>Song description</strong><br>
+                (optional)</p>
+                <input class="field" id="link_desc" name="link_desc" type="text" autocomplete="off" placeholder="Enter a song description">
+            </div>
+
+            <br>
+
+            <div align="center">
+                <input class="d-block btn btn-outline-light" type="submit" value="Upload!">
+            </div>
+        </form>
+
+    </body>
+
+
+{% endblock %}

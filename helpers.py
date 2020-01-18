@@ -8,7 +8,7 @@ from flask import redirect, render_template, request, session
 from functools import wraps
 
 def youtube_api():
-    db = SQL("sqlite:///project1.db")
+    db = SQL("sqlite:///project.db")
 
     # getting the link from the database
     link = db.execute("SELECT link FROM tracks")
