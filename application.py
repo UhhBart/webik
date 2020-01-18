@@ -192,6 +192,7 @@ def timeline():
             data.append(list(i.values()))
 
         ytkey = youtube_api()
+
         return render_template("timeline.html", data=data, ytkey=ytkey)
 
 
@@ -237,7 +238,7 @@ def group_profile():
 
         # aangeleverd
         # group_name = group_name
-        group_name = "muisy"
+        group_name = request.args.get("name")
 
         description = db.execute("SELECT description FROM groups WHERE group_name= :group_name", group_name = group_name)
         group_id = db.execute("SELECT group_id FROM groups WHERE group_name= :group_name", group_name = group_name)
@@ -245,6 +246,7 @@ def group_profile():
             group_id = group["group_id"]
 
         rows = db.execute("SELECT added_by, link, time FROM tracks WHERE group_id= :group_id", group_id = group_id)
+
         print(rows)
         links =[]
         for link in rows:
@@ -256,7 +258,7 @@ def group_profile():
             data1.append(link["time"])
             links.append(data1)
 
-        return render_template("group_profile.html", links=links, description=description)
+        return render_template("group_profile.html", links=links, description=description, group_name = group_name)
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -293,6 +295,26 @@ def results():
 # shows the results based on the users input in search
 # return to a specific group profile, from here the user can follow this group, so returns to /group_profile
     return None
+
+@app.route("/follow", methods = ["POST"])
+@login_required
+def follow():
+    group_name = request.form.get("follow")
+    group_id = db.execute("SELECT group_id FROM groups WHERE group_name = :group_name", group_name = group_name)
+    now_following = db.execute("INSERT INTO group_users (user_id, group_id) VALUES(:user_id, :group_id)", user_id = session["user_id"], group_id = group_id[0]["group_id"])
+    if not now_following:
+        return render_template("apology.html")
+    return jsonify(True)
+
+@app.route("/playlists")
+@login_required
+def playlists():
+    ids = []
+    playlist_id = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id = session["user_id"])
+    for i in range(len(playlist_id)):
+        ids.append(playlist_id[i]["group_id"])
+
+    return render_template("playlists.html", ids = ids)
 
 # # copied from finance
 # def errorhandler(e):

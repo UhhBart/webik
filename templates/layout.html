@@ -37,16 +37,10 @@
 
                 {% if session.user_id %}
                 <div class="collapse navbar-collapse">
-                    <a class="nav-link dropdown-toggle" href="#" id="groups" data-toggle="dropdown" aria-haspopup="false" aria-expanded="true">Playlists</a>
-                    <div class="dropdown-menu">
-
-                    <!--FOR LOOP DIE ALLE GROEPEN LAAT ZIEN-->
-                      <a class="dropdown-item" href="#">Group 1</a>
-                      <a class="dropdown-item" href="#">Group 2</a>
-                      <a class="dropdown-item" href="#">Group 3</a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="/create">Create a new playlist</a>
-                    </div>
+                <ul class="navbar-nav mr-auto mt-2">
+                    <li class="nav-item"><a class="nav-link" href="/playlists">Playlists</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/upload">Upload</a></li>
+                </ul>
                 </div>
 
                 <div text-align="center">
