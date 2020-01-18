@@ -233,14 +233,30 @@ def group_profile():
 
 #return to /add_number
 
-        # getting the info for the timeline
-        rows = db.execute("SELECT added_by, link, time FROM tracks")
-        data = list()
-        for i in rows:
-            data.append(list(i.values()))
+        # getting the info for the group_profile
 
-        ytkey = youtube_api()
-        return render_template("timeline.html", data=data, ytkey=ytkey)
+        # aangeleverd
+        # group_name = group_name
+        group_name = "muisy"
+
+        description = db.execute("SELECT description FROM groups WHERE group_name= :group_name", group_name = group_name)
+        group_id = db.execute("SELECT group_id FROM groups WHERE group_name= :group_name", group_name = group_name)
+        for group in group_id:
+            group_id = group["group_id"]
+
+        rows = db.execute("SELECT added_by, link, time FROM tracks WHERE group_id= :group_id", group_id = group_id)
+        print(rows)
+        links =[]
+        for link in rows:
+            data1 = []
+            data1.append(link["added_by"])
+            youtube = link["link"]
+            #moet hier door de youtube_api gaan
+            data1.append(youtube_api(youtube))
+            data1.append(link["time"])
+            links.append(data1)
+
+        return render_template("group_profile.html", links=links, description=description)
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -277,12 +293,6 @@ def results():
 # shows the results based on the users input in search
 # return to a specific group profile, from here the user can follow this group, so returns to /group_profile
     return None
-
-@app.route("/follow", methods = ["GET"])
-def follow():
-#information that user follows a group in database
-    return None
-
 
 # # copied from finance
 # def errorhandler(e):
