@@ -7,25 +7,15 @@ from cs50 import SQL
 from flask import redirect, render_template, request, session
 from functools import wraps
 
-def youtube_api():
+def youtube_api(link):
     db = SQL("sqlite:///project.db")
 
-    # getting the link from the database
-    link = db.execute("SELECT link FROM tracks")
+    link = link.split("=")
+    link = link[1].split("&")
 
-    list1 = list()
-    list2 = list()
-    for i in link:
-        list1.append(list(i.values()))
+    for item in link:
 
-    # only getting the key of the song (everything behind the /watch?v= and before &list if song is in playlist)
-    for i in list1:
-        for j in i:
-            youtube_key = j.split("=")
-            youtube_key = youtube_key[1].split("&")
-            list2.append(youtube_key)
-
-    return list2
+        return item
 
 
     #https://www.youtube.com/watch?v=4fndeDfaWCg     <-- check deze banger
