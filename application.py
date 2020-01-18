@@ -184,9 +184,17 @@ def timeline():
         if request.form['button'] == 'create':
             return render_template("create.html")
 
-    else:
 
-        return render_template("timeline.html")
+        # getting the info for the timeline
+        rows = db.execute("SELECT added_by, link, time FROM tracks")
+        data = list()
+        for i in rows:
+            data.append(list(i.values()))
+
+        ytkey = youtube_api()
+
+    else:
+        return render_template("timeline.html", data=data, ytkey=ytkey)
 
 @app.route("/create", methods=["GET", "POST"])
 @login_required
