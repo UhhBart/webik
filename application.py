@@ -185,8 +185,15 @@ def timeline():
             return render_template("create.html")
 
     else:
+        # getting the info for the timeline
+        rows = db.execute("SELECT added_by, link, time FROM tracks")
+        data = list()
+        for i in rows:
+            data.append(list(i.values()))
 
-        return render_template("timeline.html")
+        ytkey = youtube_api()
+        return render_template("timeline.html", data=data, ytkey=ytkey)
+
 
 @app.route("/create", methods=["GET", "POST"])
 @login_required
@@ -226,28 +233,37 @@ def group_profile():
 
 #return to /add_number
 
-    # is informatie nodig van de groep waarop is geklikt
-    # group_information = db.execute("SELECT name, description FROM groups WHERE)
-    return render_template("group_profile.html")
+        # getting the info for the timeline
+        rows = db.execute("SELECT added_by, link, time FROM tracks")
+        data = list()
+        for i in rows:
+            data.append(list(i.values()))
 
-@app.route("/add_number", methods=["GET", "POST"])
+        ytkey = youtube_api()
+        return render_template("timeline.html", data=data, ytkey=ytkey)
+
+
+@app.route("/upload", methods=["GET", "POST"])
 @login_required
 def add_number():
 # add a number to a playlist
-    if request.method == "POST":
 
-        # PROBLEEEM, WE HEBBEN NOG GEEN BESCHIKBARE GROUP_ID
-        # add track into database
-        # db.execute("INSERT INTO tracks (group_id, link, user_id) VALUES(:group_id, :link, :user_id)",
-        # group_id = group_id, \
-        # link = request.form.get("youtube"), \
-        # user_id = session["user_id"])
+    if request.method == "GET":
+        group_names = []
+        groups = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id = session["user_id"])
+        for group in groups:
+            group_id = group["group_id"]
+            group_names.append(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id = group_id))
+        return render_template("upload.html", groups = group_names)
 
+    elif request.method == "POST":
+        group = request.form.get("group")
+        link = request.form.get("link")
+        link_desc = request.form.get("link_desc")
 
+        group_id = db.execute("SELECT group_id FROM groups WHERE group_name = :group_name", group_name = group)
+        db.execute("INSERT INTO tracks (group_id, link, added_by) VALUES(:group_id, :link, :added_by)", group_id = group_id[0]["group_id"], link = link, added_by = session["user_id"])
         return render_template("group_profile.html")
-
-    else:
-        return render_template("add_number.html")
 
 @app.route("/search")
 def search():
@@ -266,6 +282,7 @@ def results():
 def follow():
 #information that user follows a group in database
     return None
+
 
 # # copied from finance
 # def errorhandler(e):
