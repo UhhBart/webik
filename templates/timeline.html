@@ -9,11 +9,13 @@
 
     </head>
 {% block main %}
+        <h3 align = "center">Welcome home, {{ name[0]["username"]}}!</h3>
+        <br>
 
         {% for link in data %}
         <div class= "song">
             <div align="center" color=white>
-                <strong>{{link[0]}} uploaded the following song:</strong>
+                <strong>{{link[0][0]["username"]}} uploaded the following song to <a href=/group_profile?name={{ link[3][0]["group_name"]}}>{{ link[3][0]["group_name"] }}:</a></strong>
             </div>
             <br>
             <div align="center">

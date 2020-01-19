@@ -180,7 +180,7 @@ def timeline():
 # returns to /create
 # returns to /group_profile from all the groups that the user follows
     groups_ids = db.execute ("SELECT group_id FROM group_users WHERE user_id= :user_id", user_id = session["user_id"])
-
+    name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = session["user_id"])
     # select all groups from current_user
     groups =[]
     for group in groups_ids:
@@ -188,20 +188,22 @@ def timeline():
 
     data =[]
     for group_id in groups:
-        rows = db.execute("SELECT added_by, link, time FROM tracks WHERE group_id= :group_id", group_id = group_id)
+        rows = db.execute("SELECT group_id, added_by, link, time FROM tracks WHERE group_id= :group_id", group_id = group_id)
+
+        print(rows)
         for link in rows:
             data1 = []
-            data1.append(link["added_by"])
+            #data1.append(link["group_id"])
+            data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = link["added_by"]))
             youtube = link["link"]
             #moet hier door de youtube_api gaan
             data1.append(youtube_api(youtube))
             data1.append(link["time"])
+            data1.append(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id = link["group_id"]))
             data.append(data1)
-
     # most recent songs are at the top of timeline
     data.sort(key=lambda x: x[2], reverse = True)
-
-    return render_template("timeline.html", data=data)
+    return render_template("timeline.html", data=data, name=name)
 
 
 @app.route("/create", methods=["GET", "POST"])
@@ -250,21 +252,6 @@ def group_profile():
     for group in group_id:
         group_id = group["group_id"]
 
-<<<<<<< HEAD
-    rows = db.execute("SELECT added_by, link, time FROM tracks WHERE group_id= :group_id", group_id = group_id)
-
-    links =[]
-    for link in rows:
-        data1 = []
-        data1.append(link["added_by"])
-        youtube = link["link"]
-        #moet hier door de youtube_api gaan
-        data1.append(youtube_api(youtube))
-        data1.append(link["time"])
-        links.append(data1)
-
-    return render_template("group_profile.html", links=links, description=description, group_name = group_name)
-=======
         followers = db.execute("SELECT user_id FROM group_users WHERE group_id = :group_id", group_id = group_id)
 
         rows = db.execute("SELECT added_by, link, time FROM tracks WHERE group_id= :group_id", group_id = group_id)
@@ -281,8 +268,6 @@ def group_profile():
             links.append(data1)
 
         return render_template("group_profile.html", links=links, description=description, group_name = group_name, posts = len(rows), followers = len(followers))
->>>>>>> cce2bfa91ae31d50d4aca6dbc1d5a97471ad4379
-
 
 @app.route("/upload", methods=["GET", "POST"])
 @login_required
@@ -305,7 +290,7 @@ def add_number():
         group_id = db.execute("SELECT group_id FROM groups WHERE group_name = :group_name", group_name = group)
         db.execute("INSERT INTO tracks (group_id, link, added_by) VALUES(:group_id, :link, :added_by)", group_id = group_id[0]["group_id"], link = link, added_by = session["user_id"])
         flash("Upload succesful!")
-        return render_template("timeline.html")
+        return redirect("timeline.html")
 
 @app.route("/search")
 def search():
