@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+<!DOCTYPE html>
+
+{% block title %}
+    Playlists
+{% endblock %}
+    <head>
+
+    </head>
+{% block main %}
+    <div align="center" class="form">
+        <h3>Playlists you follow:</h3>
+    {% for id in ids %}
+    <li><a href="https://www.youtube.com/watch?v=cwxbIQmL3Fk">{{ id }}</a></li>
+    {% endfor %}
+    </div>
+{% endblock %}

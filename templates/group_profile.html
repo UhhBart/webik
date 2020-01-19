@@ -7,13 +7,15 @@
 {% endblock %}
 
 {% block main %}
-
         <div>
-            <p><h1 align="center" color=white>{{ name }}</h1></p>
+            <p><h1 align="center" color=white>{{ group_name }}</h1></p>
         </div>
-        <div align="center">
-            <input class="d-block btn btn-outline-light" type="submit" value="Follow playlist">
-        </div>
+        <form action= "/follow" method="POST" name="follow" class="form">
+            <div align="center">
+                <input class="field" id="follow" name="follow" type="text" autocomplete="off" placeholder="Enter playlist name" required>
+                <input class="d-block btn btn-outline-light" type="submit" value="Follow playlist">
+            </div>
+        </form>
         <br>
         {% for link in links %}
         <div class= "song">
