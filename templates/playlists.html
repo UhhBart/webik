@@ -10,9 +10,11 @@
     </head>
 {% block main %}
     <div align="center" class="form">
-        <h3>Playlists you follow:</h3>
+        <h3>Playlists you follow:</h3><br>
+    <ul>
     {% for id in ids %}
-    <li><a href="https://www.youtube.com/watch?v=cwxbIQmL3Fk">{{ id }}</a></li>
+    <h5><li><a href="/group_profile?name={{id}}">{{ id }}</a></li></h5>
     {% endfor %}
+    </ul>
     </div>
 {% endblock %}

@@ -38,7 +38,6 @@
                 {% if session.user_id %}
                 <div class="collapse navbar-collapse">
                 <ul class="navbar-nav mr-auto mt-2">
-                    <li class="nav-item"><a class="nav-link" href="/playlists">Playlists</a></li>
                     <li class="nav-item"><a class="nav-link" href="/upload">Upload</a></li>
                 </ul>
                 </div>
@@ -48,8 +47,15 @@
                 </div>
 
                 <ul class="navbar-nav ml-auto mt-2">
-                    <li class="nav-item"><a class="nav-link" href="/change_password">Change password</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+
+                    <a href="#menu2" class="nav-link dropdown-toggle" data-toggle="dropdown" id="navbarDropdownMenuLink" aria-expanded="false" aria-haspopup="true">My account</a>
+
+                    <ul class="dropdown-menu dropdown-menu-right">
+
+                          <li><a class="dropdown-item" href="/playlists">Playlists</a></li>
+                          <li><a class="dropdown-item"href="/change_password">Change password</a></li>
+                          <li class="dropdown-divider"></li>
+                          <li><a class="dropdown-item"href="/logout">Log out</a></li>
                 </ul>
 
                 {% else %}
