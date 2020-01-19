@@ -250,6 +250,7 @@ def group_profile():
     for group in group_id:
         group_id = group["group_id"]
 
+<<<<<<< HEAD
     rows = db.execute("SELECT added_by, link, time FROM tracks WHERE group_id= :group_id", group_id = group_id)
 
     links =[]
@@ -263,6 +264,24 @@ def group_profile():
         links.append(data1)
 
     return render_template("group_profile.html", links=links, description=description, group_name = group_name)
+=======
+        followers = db.execute("SELECT user_id FROM group_users WHERE group_id = :group_id", group_id = group_id)
+
+        rows = db.execute("SELECT added_by, link, time FROM tracks WHERE group_id= :group_id", group_id = group_id)
+
+        links =[]
+        for link in rows:
+            data1 = []
+
+            data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = link["added_by"]))
+            youtube = link["link"]
+            #moet hier door de youtube_api gaan
+            data1.append(youtube_api(youtube))
+            data1.append(link["time"])
+            links.append(data1)
+
+        return render_template("group_profile.html", links=links, description=description, group_name = group_name, posts = len(rows), followers = len(followers))
+>>>>>>> cce2bfa91ae31d50d4aca6dbc1d5a97471ad4379
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -285,7 +304,8 @@ def add_number():
 
         group_id = db.execute("SELECT group_id FROM groups WHERE group_name = :group_name", group_name = group)
         db.execute("INSERT INTO tracks (group_id, link, added_by) VALUES(:group_id, :link, :added_by)", group_id = group_id[0]["group_id"], link = link, added_by = session["user_id"])
-        return render_template("group_profile.html")
+        flash("Upload succesful!")
+        return render_template("timeline.html")
 
 @app.route("/search")
 def search():
@@ -316,8 +336,9 @@ def playlists():
     ids = []
     playlist_id = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id = session["user_id"])
     for i in range(len(playlist_id)):
-        ids.append(playlist_id[i]["group_id"])
-
+        #ids.append(playlist_id[i]["group_id"])
+        playlist_name = db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id = playlist_id[i]["group_id"])
+        ids.append(playlist_name[0]["group_name"])
     return render_template("playlists.html", ids = ids)
 
 # # copied from finance
