@@ -60,7 +60,7 @@ def register():
         elif not password == confirm_password:
             return render_template("apology.html", message = "Your passwords don't match, please try again" )
 
-        # add the new user's account to the databse
+        add the new user's account to the databse
         db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
                    username=request.form.get("username"), hash=generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
 
@@ -170,6 +170,22 @@ def general_homepage():
     else:
         return render_template("general_homepage.html")
 
+
+@app.route("/check", methods=["GET"])
+def check():
+
+    # get the username of the user that wants to login
+    username = request.args.get("username")
+
+    # see if username already in database
+    usernames = db.execute("SELECT * FROM users WHERE username=:username", username=username)
+
+    # if in database return false else return true
+    if len(usernames) != 0:
+        return jsonify(False)
+
+    return jsonify(True)
+
 @app.route("/timeline")
 @login_required
 def timeline():
@@ -206,6 +222,22 @@ def timeline():
     return render_template("timeline.html", data=data, name=name)
 
 
+@app.route("/search", methods=["GET"])
+def search():
+    new = []
+    # searchInput = request.args.get("search")
+    # print(searchInput, request.args.get("search"))
+    groups = db.execute("SELECT group_name FROM groups")
+    print(groups, (request.args.get("q")))
+    # return render_template("/general_homepage.html", groups=groups)
+    for playlist in groups:
+        playlist["group_name"] = playlist["group_name"].lower()
+        print(playlist["group_name"].startswith(request.args.get("q")))
+        if playlist["group_name"].startswith(request.args.get('q')):
+            new.append(playlist["group_name"])
+
+    print(new)
+    return new
 @app.route("/create", methods=["GET", "POST"])
 @login_required
 def create():
@@ -292,12 +324,7 @@ def add_number():
         flash("Upload succesful!")
         return redirect("timeline.html")
 
-@app.route("/search")
-def search():
-# this is a searchpage to look for new groups/ playlists
-# based on a users input
-# return to results
-    return None
+
 
 @app.route("/results")
 def results():

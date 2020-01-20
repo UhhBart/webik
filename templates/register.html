@@ -13,52 +13,74 @@
         <div>
             <p><h3 align="center" color="#ff0000">Register for a brand new VibeCheck account here!</h3></p>
         </div>
-        <form id="form" action= "/register" method="POST" name="register" class="form">
-            <div>
+
+        <form action="/register" method="post" class="needs-validation" novalidate>
+            <div class="form-group">
                 <p align="left"><strong>Username</strong></p>
-                <input class="field" id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" required>
+                <input type="text" class="form-control" id="username" placeholder="Username" onkeyup= "checks()" required>
+                <div class="invalid-feedback" id="taken"> Provide a username </div>
+
             </div>
             <br>
-            <div>
+            <div class="form-group">
                 <p align="left"><strong>Password</strong><br>(Must be at least 8 characters long)</p>
-                <input class="field" id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password" required>
+
+                <input class="form-control" name="password" placeholder="Password" type="password" required>
+                <div class="invalid-feedback"></div>
             </div>
+            </br>
             <br>
-            <div>
+            <div class="form-group">
                 <p align="left"><strong>Confirm password</strong></p>
-                <input class="field" id="confirm_password" name="confirm_password" type="password" autocomplete="off" placeholder="Repeat your password" required>
+
+                <input class="form-control" name="confirmation" placeholder="Repeat password" type="password" required>
+                <div class="invalid-feedback"></div>
             </div>
-            <br>
+            </br>
             <div align="center">
-                <input class="d-block btn btn-outline-light" type="submit" value="Register!">
+                <button class="btn btn-primary" type="submit">Register!</button>
             </div>
-            <br>
             <div>
                Already have an account? <br><a href= "login">Log in here!</a>
             </div>
         </form>
+
     </body>
 <script>
-const username = document.getElementById("username");
-const password = document.getElementById("password");
-const confirm_password = document.getElementById("confirm_password");
-const form = document.getElementById("form");
 
-form.addEventListener("submit", function(error) {
-    if (username.value == ""){
-        error.preventDefault();
-        alert("Please enter your username");
+
+    let users_name = document.getElementById("username");
+    let alert_user = document.getElementById("taken");
+    function  checks() {
+        $.get("/check?username="+ users_name.value, function (checked){
+            if (checked == false) {
+                alert_user.innerHTML = "Username not available";
+                users_name.setAttribute("class", "form-control is-invalid");
+            }
+            else {
+                alert_user.innerHTML = "Username available";
+                users_name.setAttribute("class", "form-control");
+            }
+        });
     }
-    else if (password.value.length < 8){
-        error.preventDefault();
-        password.style.borderColor = "red";
-        alert("Make sure your password is at least 8 characters");
-    }
-    else if (password.value != confirm_password.value){
-        error.preventDefault();
-        confirm_password.style.borderColor = "red";
-        alert("Passwords don't match");
-    }
-});
+    // https://getbootstrap.com/docs/4.1/components/forms/#validation
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false || users_name.getAttribute("class") == "form-control is-invalid") {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+
 </script>
 {% endblock %}
