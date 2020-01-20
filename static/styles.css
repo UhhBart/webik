@@ -20,8 +20,7 @@ body {
 margin: 0 auto;
 width:350px;
 text-align: center;
-background-color: rgba(255, 255, 255, 0.2);
-opacity: 0.8;
+background-color: rgba(255, 255, 255, 0.33);
 padding: 50px;
 border-radius: 15px 50px 30px;
 }
@@ -31,7 +30,7 @@ margin: 0 auto;
 width:60%;
 right: 20px;
 text-align: center;
-background-color: rgba(255, 255, 255, 0.2);
+background-color: rgba(255, 255, 255, 0.33);
 padding: 10px;
 border-radius: 15px 15px;
 }
@@ -42,20 +41,13 @@ border-radius: 15px 15px;
   padding: 12px 20px;
   margin: 0px 0;
   box-sizing: border-box;
-
-}
-
-.field:focus {
-    outline: none !important;
-    border-color: #0320fc;
-    box-shadow: 0 0 10px #719ECE;
 }
 
 .song {
 margin: 0 auto;
 width:60%;
 text-align: center;
-background-color: rgba(255, 255, 255, 0.2);
+background-color: rgba(255, 255, 255, 0.33);
 padding: 10px;
 border-radius: 15px 50px 30px;
 }

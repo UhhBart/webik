@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 {% block title %}
-    Create group
+    Create playlist
 {% endblock %}
 
 {% block main %}
@@ -13,22 +13,53 @@
         </div>
         <form class="form" action= "/create" method="POST" name="create" >
             <div>
-                <p align="left"><strong>Name playlist</strong></p>
-                <input class="field" id="playlist" name="playlist" type="text" autocomplete="off" placeholder="Enter a playlist name" required>
+                <p align="left"><strong>Name playlist</strong><br>
+                (please don't use spaces)</p>
+                <input class="form-control" id="playlist" name="playlist" type="text" autocomplete="off" placeholder="Enter a playlist name" required pattern="[0-9a-zA-Z_.-]*" required>
             </div>
             <br>
             <div>
                 <p align="left"><strong>Playlist description</strong><br>
                 (optional)</p>
-                <input class="field" id="description" name="description" type="text" autocomplete="off" placeholder="Enter a playlist description">
+                <input class="form-control" id="description" name="description" type="text" autocomplete="off" placeholder="Enter a playlist description">
             </div>
             <br>
             <div align="center">
-                <input class="d-block btn btn-outline-light" type="submit" value="Create!">
+                <input class="d-block btn btn-outline-light" type="submit" value="Create!" id="create">
             </div>
         </form>
 
     </body>
 
+<script>
+// source: https://jsfiddle.net/pmw57/2zqcqpzx/1/
+var input = document.querySelector("[name=playlist]");
 
+input.oninput = function(event) {
+    event.target.setCustomValidity("");
+};
+input.oninvalid = function(event) {
+    event.target.setCustomValidity("Special characters are not allowed.");
+};
+
+var create = document.getElementById("create");
+
+var specialChars = "<>@!#$%^&*()_+[]{}?:;|'\"\\,./~`-=";
+var checkForSpecialChar = function(string){
+ for(i = 0; i < specialChars.length;i++){
+   if(string.indexOf(specialChars[i]) > -1){
+       return true;
+    }
+ }
+ return false;
+};
+
+var str = document.querySelector("[name=playlist]");
+if(checkForSpecialChar(str)){
+  event.target.setCustomValidity("Special characters are not allowed.");
+  create.preventDefault();
+} else {
+    event.target.setCustomValidity("");
+}
+</script>
 {% endblock %}

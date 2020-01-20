@@ -19,10 +19,9 @@
 
         <form action= "/follow" method="POST" name="follow" class="form">
             <div align="center">
-                <input class="field" id="follow" name="follow" type="text" autocomplete="off" placeholder="<<TEMPORARY>>" required>
+                <input class="form-control" id="follow" name="follow" type="text" autocomplete="off" placeholder="<<TEMPORARY>>" required>
                 <input class="d-block btn btn-outline-light" type="submit" value="Follow playlist">
             </div>
-
         </form>
         <br>
         {% for link in links %}
@@ -37,18 +36,18 @@
                 </iframe>
 
             {% if link[3] %}
-            <div class = "comment">
-            {{ link[3] }}
-            </div>
+                <div class = "comment">
+                    {{ link[3] }}
+                </div>
             {% endif %}
 
             <div>
                 <input class="d-block btn btn-outline-light" type="submit" value="Upvote!"><br>
             </div>
             </div>
-            {% if link[3] %}
-            Uploaded at {{link[2]}}
-            {% endif %}
+                {% if link[3] %}
+                    Uploaded at {{link[2]}}
+                {% endif %}
             </div>
         <br>
         {% endfor %}

@@ -9,8 +9,10 @@
 
     </head>
 {% block main %}
+    <div>
+        <p><h1 align="center" color=black>Followed playlists</h1></p>
+    </div>
     <div align="center" class="form">
-        <h3>Playlists you follow:</h3><br>
     <ul>
     {% for id in ids %}
     <h5><li><a href="/group_profile?name={{id}}">{{ id }}</a></li></h5>

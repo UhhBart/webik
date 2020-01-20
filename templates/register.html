@@ -14,7 +14,7 @@
             <p><h3 align="center" color="#ff0000">Register for a brand new VibeCheck account here!</h3></p>
         </div>
 
-        <form action="/register" method="post" class="needs-validation" novalidate>
+        <form action="/register" method="post" id="needs-validation" class="form" novalidate>
             <div class="form-group">
                 <p align="left"><strong>Username</strong></p>
                 <input type="text" class="form-control" name="name" id="username" placeholder="Username" onkeyup= "checks()" required>
@@ -94,7 +94,7 @@
       'use strict';
       window.addEventListener('load', function() {
         // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        var forms = document.getElementsByClassName('needs-validation');
+        var forms = document.getElementById('needs-validation');
         // Loop over them and prevent submission
         var validation = Array.prototype.filter.call(forms, function(form) {
           form.addEventListener('submit', function(event) {

@@ -11,7 +11,13 @@
 {% block main %}
         <h3 align = "center">Welcome home, {{ name[0]["username"]}}!</h3>
         <br>
-
+        {% if not data %}
+            <div class = "form">
+                <strong>Whoops! Looks like there aren't any songs to display here yet!
+                <br><br>
+                Add a new song to one of your followed playlists <a href = /upload>here!</strong>
+            </div>
+        {% endif %}
         {% for link in data %}
         <div class= "song">
             <div align="center" color=white>
