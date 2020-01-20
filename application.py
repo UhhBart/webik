@@ -1,7 +1,7 @@
 import os
 
 from cs50 import SQL
-from flask import Flask, flash, jsonify, redirect, render_template, request, session
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -91,7 +91,7 @@ def change_password():
             return render_template("apology.html", message = "Passwords don't match" )
 
         # retrieve user's old password
-        password = db.execute("SELECT hash FROM users WHERE id = :id", id=session["user_id"])
+        password = db.execute("SELECT hash FROM users WHERE user_id = :user_id", user_id=session["user_id"])
 
         # ensure old password is correct
         if len(password) != 1 or not check_password_hash(password[0]["hash"], request.form.get("old_password")):
@@ -99,11 +99,11 @@ def change_password():
 
         # change user's password
         hash = generate_password_hash(request.form.get("new_confirmation"), method='pbkdf2:sha256', salt_length=8)
-        db.execute("UPDATE users SET hash = :hash WHERE id = :id",
-                   id=session["user_id"], hash=hash)
+        db.execute("UPDATE users SET hash = :hash WHERE user_id = :user_id",
+                   user_id=session["user_id"], hash=hash)
 
         flash ("Password changed!")
-        return redirect ("/")
+        return redirect ("/timeline")
 
     else:
         return render_template("change_password.html")
@@ -188,7 +188,7 @@ def timeline():
 
     data =[]
     for group_id in groups:
-        rows = db.execute("SELECT group_id, added_by, link, time FROM tracks WHERE group_id= :group_id", group_id = group_id)
+        rows = db.execute("SELECT group_id, added_by, link, time, link_desc FROM tracks WHERE group_id= :group_id", group_id = group_id)
 
         print(rows)
         for link in rows:
@@ -200,6 +200,7 @@ def timeline():
             data1.append(youtube_api(youtube))
             data1.append(link["time"])
             data1.append(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id = link["group_id"]))
+            data1.append(link["link_desc"])
             data.append(data1)
     # most recent songs are at the top of timeline
     data.sort(key=lambda x: x[2], reverse = True)
@@ -227,7 +228,7 @@ def create():
                     user_id = session["user_id"], \
                     group_id = gr_id)
 
-        return render_template("group_profile.html")
+        return redirect(url_for('playlists'))
 
 
     else:
@@ -254,7 +255,7 @@ def group_profile():
 
         followers = db.execute("SELECT user_id FROM group_users WHERE group_id = :group_id", group_id = group_id)
 
-        rows = db.execute("SELECT added_by, link, time FROM tracks WHERE group_id= :group_id", group_id = group_id)
+        rows = db.execute("SELECT added_by, link, time, link_desc FROM tracks WHERE group_id= :group_id", group_id = group_id)
 
         links =[]
         for link in rows:
@@ -265,6 +266,7 @@ def group_profile():
             #moet hier door de youtube_api gaan
             data1.append(youtube_api(youtube))
             data1.append(link["time"])
+            data1.append(link["link_desc"])
             links.append(data1)
 
         return render_template("group_profile.html", links=links, description=description, group_name = group_name, posts = len(rows), followers = len(followers))
@@ -288,9 +290,9 @@ def add_number():
         link_desc = request.form.get("link_desc")
 
         group_id = db.execute("SELECT group_id FROM groups WHERE group_name = :group_name", group_name = group)
-        db.execute("INSERT INTO tracks (group_id, link, added_by) VALUES(:group_id, :link, :added_by)", group_id = group_id[0]["group_id"], link = link, added_by = session["user_id"])
+        db.execute("INSERT INTO tracks (group_id, link, added_by, link_desc) VALUES(:group_id, :link, :added_by, :link_desc)", group_id = group_id[0]["group_id"], link = link, added_by = session["user_id"], link_desc = link_desc)
         flash("Upload succesful!")
-        return redirect("timeline.html")
+        return redirect("/timeline")
 
 @app.route("/search")
 def search():
@@ -325,6 +327,11 @@ def playlists():
         playlist_name = db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id = playlist_id[i]["group_id"])
         ids.append(playlist_name[0]["group_name"])
     return render_template("playlists.html", ids = ids)
+
+@app.route("/profile", methods = ["GET"])
+
+def profile():
+    return render_template("profile.html")
 
 # # copied from finance
 # def errorhandler(e):

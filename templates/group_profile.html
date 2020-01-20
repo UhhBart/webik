@@ -9,11 +9,16 @@
 {% block main %}
         <div>
             <p><h1 align="center" color=white>{{ group_name }}</h1></p>
+            <h5 align="center">{{posts}} song(s) | {{followers}} follower(s)</h5>
         </div>
+            {% if description[0]["description"] %}
+            <div class = "comment">
+                {{ description[0]["description"] }}
+            </div>
+            {% endif %}
+
         <form action= "/follow" method="POST" name="follow" class="form">
             <div align="center">
-                <h5>{{posts}} song(s)</h5>
-                <h5>{{followers}} follower(s)</h5>
                 <input class="field" id="follow" name="follow" type="text" autocomplete="off" placeholder="<<TEMPORARY>>" required>
                 <input class="d-block btn btn-outline-light" type="submit" value="Follow playlist">
             </div>
@@ -30,11 +35,20 @@
                 <iframe width="420" height="315"
                     src="https://www.youtube.com/embed/{{link[1]}}">
                 </iframe>
+
+            {% if link[3] %}
+            <div class = "comment">
+            {{ link[3] }}
+            </div>
+            {% endif %}
+
             <div>
                 <input class="d-block btn btn-outline-light" type="submit" value="Upvote!"><br>
             </div>
             </div>
+            {% if link[3] %}
             Uploaded at {{link[2]}}
+            {% endif %}
             </div>
         <br>
         {% endfor %}
