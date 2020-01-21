@@ -310,13 +310,17 @@ def group_profile():
     description = db.execute("SELECT description FROM groups WHERE group_name= :group_name", group_name=group_name)
     group_id = db.execute("SELECT group_id FROM groups WHERE group_name= :group_name", group_name=group_name)
 
+    # creator id van groep moet nog ingevoerd worden in groups
+    #creator_id = db.execute("SELECT creoter_id FROM groups WHERE group_name= :group_name", group_name=group_name)
+
     #???
     for group in group_id:
         group_id = group["group_id"]
 
         # select proper information from database
         followers = db.execute("SELECT user_id FROM group_users WHERE group_id = :group_id", group_id=group_id)
-        rows = db.execute("SELECT added_by, link, time, link_desc FROM tracks WHERE group_id= :group_id", group_id=group_id)
+        rows = db.execute("SELECT added_by, link, time, link_desc, track_id FROM tracks WHERE group_id= :group_id", group_id=group_id)
+
 
         #???
         links = []
@@ -329,9 +333,11 @@ def group_profile():
             data1.append(youtube_api(youtube))
             data1.append(link["time"])
             data1.append(link["link_desc"])
+            data1.append(link["track_id"])
             links.append(data1)
 
-
+        # most recent songs are at the top of group_profile
+        links.sort(key=lambda x: x[2], reverse=True)
         return render_template("group_profile.html", id= group_id, links=links, description=description, group_name=group_name, posts=len(rows), followers=len(followers), current_user=current_user)
 
 
@@ -388,7 +394,7 @@ def follow():
     if check_follow:
         return jsonify(False)
 
-    db.execute("INSERT INTO group_users (user_id, group_id) VALUES(:user_id, :group_id)",
+    db.execute("INSERT INTO group_users user_id, group_id) VALUES(:user_id, :group_id)",
                                user_id=session["user_id"], group_id=group_id)
 
     return jsonify(True)
@@ -418,16 +424,20 @@ def profile():
 @login_required
 def deletesong():
 
-    # time moet worden meegeven met de knop
-    # time = time
-    #db.execute("DELETE FROM tracks WHERE time= :time", time = time)
-    return render_template("group_profile.html")
+    track_id = request.args.get("track_id")
+
+    db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
+
 
 @app.route("/deleteplaylist")
 @login_required
 def deleteplaylist():
 
-    return render_template("group_profile.html")
+    group_id = request.args.get("group_id")
+
+    db.execute("DELETE FROM groups WHERE group_id= :group_id", group_id = group_id)
+    # er moet nog meer worden verwijderd maar dit is de basis
+
 
 # # copied from finance
 # def errorhandler(e):
