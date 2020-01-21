@@ -292,10 +292,18 @@ def create():
 
 
 @app.route("/group_profile")
+@login_required
 def group_profile():
     """Show playlist with all uploaded songs"""
 
-    # get group_name from url
+#return to /add_number
+
+
+    current_user = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = session["user_id"])
+
+    # getting the info for the group_profile
+
+    # aangeleverd
     group_name = request.args.get("name")
 
     # select proper information from database
@@ -323,8 +331,7 @@ def group_profile():
             data1.append(link["link_desc"])
             links.append(data1)
 
-        return render_template("group_profile.html", links=links, description=description, group_name=group_name, posts=len(rows), followers=len(followers))
-
+        return render_template("group_profile.html", links=links, description=description, group_name = group_name, posts = len(rows), followers = len(followers), current_user=current_user)
 
 @app.route("/upload", methods=["GET", "POST"])
 @login_required
@@ -402,6 +409,21 @@ def playlists():
 def profile():
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
     return render_template("profile.html", name=name)
+
+@app.route("/deletesong")
+@login_required
+def deletesong():
+
+    # time moet worden meegeven met de knop
+    # time = time
+    #db.execute("DELETE FROM tracks WHERE time= :time", time = time)
+    return render_template("group_profile.html")
+
+@app.route("/deleteplaylist")
+@login_required
+def deleteplaylist():
+
+    return render_template("group_profile.html")
 
 # # copied from finance
 # def errorhandler(e):

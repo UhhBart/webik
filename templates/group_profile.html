@@ -42,7 +42,10 @@
             {% endif %}
 
             <div>
-                <input class="d-block btn btn-outline-light" type="submit" value="Upvote!"><br>
+                <input class="d-block btn btn-outline-light"  type="submit" value="Upvote!"><br>
+                {%if link[0]==current_user%}
+                    <button id = '{{ link }}' class="d-block btn btn-outline-light buttondelete" name="buttondelete" type="button" onclick= "deleted()" >Delete</button>
+                {%endif%}
             </div>
             </div>
                 {% if link[3] %}
@@ -52,5 +55,41 @@
         <br>
         {% endfor %}
 
+    <script>
+        function deleted() {
+            console.log("hoi")
+            var returndialog = confirm("Are you sure you want to delete this song.");
+            if (returndialog == true) {
+                console.log("oke")
 
+            } else {
+                console.log("no")
+            }
+        };
+
+    // }
+
+    // const deletebuttons = document.querySelectorAll(".buttondelete")
+    // for (const button of deletebuttons) {
+    //     button.addEventListener("click", getinfo())
+    // }
+
+    // function getinfo(e) {
+
+    //     var info = document.getElementsByTagName("buttondelete").id;
+
+    //     $ajax({
+    //         type: "POST",
+    //         url: '{'/delete'}',
+    //         data: info
+    //         });
+
+    //     }
+    //     console.log(e)
+
+    // Functie naar python aanroepen, input = info
+
+    // link python function from javascript (ajax request)
+
+    </script>
 {% endblock %}
