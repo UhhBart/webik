@@ -229,7 +229,6 @@ def timeline():
         #???
         for link in rows:
             data1 = []
-
             data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
             youtube = link["link"]
 
