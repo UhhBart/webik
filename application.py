@@ -206,6 +206,35 @@ def check_group():
 
     return jsonify(True)
 
+@app.route("/check_login_username", methods=["GET"])
+def check_login_username():
+    """Check username availability"""
+    # Query database for username
+
+
+    rows = db.execute("SELECT * FROM users WHERE username = :username",
+                      username=request.args.get("username"))
+
+    # Ensure username exists and password is correct
+    if len(rows) != 1:
+        return jsonify(False)
+
+    else:
+        return jsonify(True)
+
+@app.route("/check_login_password", methods=["GET"])
+def check_login_password():
+    """Check username availability"""
+
+
+    # Query database for username
+    rows = db.execute("SELECT * FROM users WHERE username = :username",
+                      username=request.args.get("username"))
+    if not check_password_hash(rows[0]["hash"], request.args.get("password")):
+        return jsonify(False)
+    else:
+        return jsonify(True)
+
 
 @app.route("/timeline")
 @login_required

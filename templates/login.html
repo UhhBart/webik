@@ -13,13 +13,17 @@
         <div>
             <p><h3 align="center" color="#ff0000">You can log in here.</h3></p>
         </div>
-        <form action= "/login" method="POST" name="register" class="form" >
+        <form action= "/login" method="POST" name="register" class="form" id="needs-validation"  navalidate>
             <div>
-                <input class="form-control" id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" required>
+                <input class="form-control" id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" onkeyup = "checks()" required>
+                <div class="invalid-feedback" id="taken"> Provide a username </div>
+
+
             </div>
             <br>
             <div>
-                <input class="form-control" id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password" required>
+                <input class="form-control" id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password" onkeyup= "checking()" required>
+                <div class="invalid-feedback" id="error"> Provide a password </div>
             </div>
             <br>
             <div align="center">
@@ -32,21 +36,57 @@
         </form>
 
 <script>
-const username = document.getElementById("username");
-const password = document.getElementById("password");
-const form = document.getElementById("form");
 
-form.addEventListener("submit", function(error) {
-    if (username.value == ""){
-        error.preventDefault();
-        username.style.borderColor = "red";
-        alert("Please enter your username");
+    let users_name = document.getElementById("username");
+    let alert_user = document.getElementById("taken");
+    let passwords = document.getElementById("password")
+    let error = document.getElementById("error");
+
+
+    function  checks() {
+        $.get("/check_login_username?username="+ users_name.value, function (checked){
+            if (checked == false) {
+                alert_user.innerHTML = "Password or username is incorrect"
+                users_name.setAttribute("class", "form-control is-invalid");
+            }
+            else {
+                alert_user.innerHTML = "Username exist";
+                users_name.setAttribute("class", "form-control");
+            }
+        });
     }
-    else if (password.value == ""){
-        error.preventDefault();
-        password.style.borderColor = "red";
-        alert("Please enter your password!");
+    function  checking() {
+        $.get("/check_login_password?password="+ passwords.value + "&username=" + users_name.value, function (chec){
+            if (chec == false) {
+                error.innerHTML = "Username and do not match password"
+                passwords.setAttribute("class", "form-control is-invalid");
+            }
+            else {
+                error.innerHTML = "Username and password match";
+                passwords.setAttribute("class", "form-control");
+            }
+        });
     }
-});
+
+    // https://getbootstrap.com/docs/4.1/components/forms/#validation
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementById('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false || passwords.getAttribute("class") == "form-control is-invalid" || users_name.getAttribute("class") == "form-control is-invalid") {
+              event.preventDefault();
+              event.stopPropagation();
+
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+
 </script>
 {% endblock %}
