@@ -11,7 +11,12 @@
             <p><h1 align="center" color=white>{{ group_name }}</h1></p>
 
             <br>
-            <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) | <a href="/follow?name={{id}}"><button id="follow-button" type="button">+ Follow!</button></a></h5>
+            <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) |
+            {% if button == "follow"%}
+            <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a></h5>
+            {% else %}
+             <a href="/follow?name={{id}}"><button id="follow-button" type="button">+ Follow!</button></a></h5>
+             {% endif %}
 
             <a href"/deleteplaylist?group_id={{id}}"><button id= 'deleteplaylist' type="button" >Delete Playlist</button></a>
 
@@ -53,7 +58,11 @@
         <br>
         {% endfor %}
 
-    <script>
+<script>
+    var follow = document.getElementById("follow-button")
+    var unfollow = document.getElementById("unfollow-button")
+
+
         // function deleted() {
         //     console.log("hoi")
         //     var returndialog = confirm("Are you sure you want to delete this song.");

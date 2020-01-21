@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import login_required, youtube_api
+from helpers import login_required, youtube_api, check_following, link_check
 
 # Configure application
 app = Flask(__name__)
@@ -238,7 +238,6 @@ def timeline():
             data1.append(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
             data1.append(link["link_desc"])
             data.append(data1)
-
     # most recent songs are at the top of timeline
     data.sort(key=lambda x: x[2], reverse=True)
     return render_template("timeline.html", data=data, name=name)
@@ -295,15 +294,13 @@ def create():
 def group_profile():
     """Show playlist with all uploaded songs"""
 
-#return to /add_number
-
-
     current_user = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = session["user_id"])
 
     # getting the info for the group_profile
 
     # aangeleverd
     group_name = request.args.get("name")
+    user_id = session["user_id"]
 
     # select proper information from database
     description = db.execute("SELECT description FROM groups WHERE group_name= :group_name", group_name=group_name)
@@ -337,7 +334,14 @@ def group_profile():
 
         # most recent songs are at the top of group_profile
         links.sort(key=lambda x: x[2], reverse=True)
-        return render_template("group_profile.html", id= group_id, links=links, description=description, group_name=group_name, posts=len(rows), followers=len(followers), current_user=current_user)
+
+        if check_following(group_id, user_id):
+            button = "follow"
+        else:
+            button = "unfollow"
+
+        return render_template("group_profile.html", id= group_id, links=links, description=description, group_name=group_name,
+                                posts=len(rows), followers=len(followers), current_user=current_user, button=button)
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -361,6 +365,10 @@ def add_number():
         # retrieve proper information
         group = request.form.get("group")
         link = request.form.get("link")
+
+        if not link_check(link):
+            return render_template("apology.html", message = "HOW DARE YOU")
+
         link_desc = request.form.get("link_desc")
 
         # add track to database
@@ -386,17 +394,18 @@ def follow():
     """Allow users to follow playlists"""
 
     group_id = request.args.get("name")
+    user_id = session["user_id"]
 
-    check_follow = db.execute("SELECT user_id, group_id FROM group_users WHERE group_id = :group_id",
-                              group_id=group_id)
+    if check_following(group_id, user_id):
+        db.execute("DELETE FROM group_users WHERE group_id = :group_id AND user_id = :user_id", group_id=group_id, user_id=session["user_id"])
+        return jsonify("Unfollowed")
 
-    if check_follow:
-        return jsonify(False)
+    else:
+        db.execute("INSERT INTO group_users (user_id, group_id) VALUES(:user_id, :group_id)",
+                   user_id=session["user_id"], group_id=group_id)
+        return jsonify("Followed")
 
-    db.execute("INSERT INTO group_users user_id, group_id) VALUES(:user_id, :group_id)",
-                               user_id=session["user_id"], group_id=group_id)
-
-    return jsonify(True)
+    return render_template("apology.html")
 
 @app.route("/playlists")
 @login_required

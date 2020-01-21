@@ -73,6 +73,7 @@ function checking() {
   }, false);
 })();
 
+// make sure user doesn't put in any special characters.
 input.oninput = function(event) {
     event.target.setCustomValidity("");
 };
