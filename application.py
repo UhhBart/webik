@@ -42,7 +42,7 @@ def register():
 
         # initialize variables
         password = request.form.get("password")
-        username = request.form.get("name")
+        username = request.form.get("username")
         confirm_password = request.form.get("confirmation")
 
         # make sure the user put in a username
@@ -268,7 +268,7 @@ def create():
                    user_id=session["user_id"],
                    group_id=gr_id)
 
-        return redirect(url_for("group_profile"))
+        return redirect(url_for("playlists"))
 
     else:
         return render_template("create.html")
@@ -306,7 +306,7 @@ def group_profile():
             data1.append(link["link_desc"])
             links.append(data1)
 
-        return render_template("group_profile.html", links=links, description=description, group_name=group_name, posts=len(rows), followers=len(followers))
+        return render_template("group_profile.html", id= group_id, links=links, description=description, group_name=group_name, posts=len(rows), followers=len(followers))
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -349,21 +349,23 @@ def results():
     return None
 
 
-@app.route("/follow", methods=["POST"])
+@app.route("/follow")
 @login_required
 def follow():
     """Allow users to follow playlists"""
 
-    group_name = request.form.get("follow")
-    group_id = db.execute("SELECT group_id FROM groups WHERE group_name = :group_name", group_name=group_name)
-    now_following = db.execute("INSERT INTO group_users (user_id, group_id) VALUES(:user_id, :group_id)",
-                               user_id=session["user_id"], group_id=group_id[0]["group_id"])
+    group_id = request.args.get("name")
 
-    if not now_following:
-        return render_template("apology.html")
+    check_follow = db.execute("SELECT user_id, group_id FROM group_users WHERE group_id = :group_id",
+                              group_id=group_id)
+
+    if check_follow:
+        return jsonify(False)
+
+    db.execute("INSERT INTO group_users (user_id, group_id) VALUES(:user_id, :group_id)",
+                               user_id=session["user_id"], group_id=group_id)
 
     return jsonify(True)
-
 
 @app.route("/playlists")
 @login_required
