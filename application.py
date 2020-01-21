@@ -195,13 +195,13 @@ def check_group():
     """Check groupname availability"""
 
     # retrieve group name
-    group_name = request.args.get("groupname")
+    group_name = request.args.get("playlist")
 
     # check whether group name already in database
     DB = db.execute("SELECT group_name FROM groups WHERE group_name=:group_name", group_name=group_name)
 
     # return false if group name already exists
-    if len(group_name) != 0:
+    if len(DB) != 0:
         return jsonify(False)
 
     return jsonify(True)
