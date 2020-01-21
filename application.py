@@ -268,9 +268,10 @@ def create():
     if request.method == "POST":
 
         # put new playlist information into database
-        db.execute("INSERT INTO groups (group_name, description) VALUES(:group_name, :description)",
+        db.execute("INSERT INTO groups (group_name, description, creator_id) VALUES(:group_name, :description, :creator_id)",
                    group_name=request.form.get("playlist"),
-                   description=request.form.get("description"))
+                   description=request.form.get("description"),
+                   creator_id = session['user_id'])
 
         # link creator to group
         group_id = db.execute("SELECT group_id FROM groups WHERE group_name= :group_name", group_name=request.form.get("playlist"))
@@ -306,9 +307,12 @@ def group_profile():
     description = db.execute("SELECT description FROM groups WHERE group_name= :group_name", group_name=group_name)
     group_id = db.execute("SELECT group_id FROM groups WHERE group_name= :group_name", group_name=group_name)
 
-    # creator id van groep moet nog ingevoerd worden in groups
-    #creator_id = db.execute("SELECT creoter_id FROM groups WHERE group_name= :group_name", group_name=group_name)
 
+    creator_id = db.execute("SELECT creator_id FROM groups WHERE group_name= :group_name", group_name=group_name)
+    for id in creator_id:
+        creator_id = id["creator_id"]
+
+    user_id = session["user_id"]
     #???
     for group in group_id:
         group_id = group["group_id"]

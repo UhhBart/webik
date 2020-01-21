@@ -11,14 +11,16 @@
             <p><h1 align="center" color=white>{{ group_name }}</h1></p>
 
             <br>
+
             <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) |
             {% if button == "follow"%}
-            <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a></h5>
+                <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a></h5>
             {% else %}
-             <a href="/follow?name={{id}}"><button id="follow-button" type="button">+ Follow!</button></a></h5>
-             {% endif %}
+                <a href="/follow?name={{id}}"><button id="follow-button" type="button">+ Follow!</button></a></h5>
+            {% endif %}
 
             <a href"/deleteplaylist?group_id={{id}}"><button id= 'deleteplaylist' type="button" >Delete Playlist</button></a>
+            {% endif %}
 
         </div>
             {% if description[0]["description"] %}
