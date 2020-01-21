@@ -44,9 +44,12 @@ function checking() {
         if (main == false) {
             took.innerHTML = "Playlist name already taken"
             name.setAttribute("class", "form-control is-invalid");
+            document.getElementById('create').disabled = true;
+            n
         } else {
             took.innerHTML = "Playlist name available"
             name.setAttribute("class", "form-control");
+            document.getElementById('create').disabled = false;
         }
     });
 
