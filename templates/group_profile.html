@@ -12,9 +12,9 @@
 
             <br>
             <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) | <a href="/follow?name={{id}}"><button id="follow-button" type="button">+ Follow!</button></a></h5>
-
+            {%if user_id == creator_id%}
             <a href"/deleteplaylist?group_id={{id}}"><button id= 'deleteplaylist' type="button" >Delete Playlist</button></a>
-
+            {% endif %}
         </div>
             {% if description[0]["description"] %}
             <div class = "comment">
