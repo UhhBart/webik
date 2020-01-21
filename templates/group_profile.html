@@ -7,9 +7,11 @@
 {% endblock %}
 
 {% block main %}
-        <div>
+        <div align="center">
             <p><h1 align="center" color=white>{{ group_name }}</h1></p>
-            <h5 align="center">{{posts}} song(s) | {{followers}} follower(s)</h5>
+
+            <br>
+            <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) | <a href="/follow?name={{id}}"><button id="follow-button" type="button">+ Follow!</button></a></h5>
         </div>
             {% if description[0]["description"] %}
             <div class = "comment">
@@ -17,12 +19,6 @@
             </div>
             {% endif %}
 
-        <form action= "/follow" method="POST" name="follow" class="form">
-            <div align="center">
-                <input class="form-control" id="follow" name="follow" type="text" autocomplete="off" placeholder="<<TEMPORARY>>" required>
-                <input class="d-block btn btn-outline-light" type="submit" value="Follow playlist">
-            </div>
-        </form>
         <br>
         {% for link in links %}
         <div class= "song">

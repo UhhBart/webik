@@ -11,11 +11,12 @@
         <div>
             <p><h1 align="center" color=black>Create a new Playlist!</h1></p>
         </div>
-        <form class="form" action= "/create" method="POST" name="create" >
+        <form class="form" action= "/create" method="POST" name="create" id="needs-validation">
             <div>
                 <p align="left"><strong>Name playlist</strong><br>
                 (please don't use spaces)</p>
-                <input class="form-control" id="playlist" name="playlist" type="text" autocomplete="off" placeholder="Enter a playlist name" required pattern="[0-9a-zA-Z_.-]*" required>
+                <input class="form-control" id="playlist" name="playlist" type="text" autocomplete="off" placeholder="Enter a playlist name" required pattern="[0-9a-zA-Z_.-]*" onkeyup= "checking()" required>
+                <div class="invalid-feedback" id="took"> Provide a username </div>
             </div>
             <br>
             <div>
@@ -34,6 +35,40 @@
 <script>
 // source: https://jsfiddle.net/pmw57/2zqcqpzx/1/
 var input = document.querySelector("[name=playlist]");
+let took = document.getElementById('took');
+let name = document.getElementById("playlist")
+console.log(took, name)
+
+function checking() {
+    $.get("/check_group?playlist=" + name.value, function(main) {
+        if (main == false) {
+            took.innerHTML = "Playlist name already taken"
+            name.setAttribute("class", "form-control is-invalid");
+        } else {
+            took.innerHTML = "Playlist name available"
+            name.setAttribute("class", "form-control");
+        }
+    });
+
+}
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementById('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false || name.getAttribute("class") == "form-control is-invalid") {
+          event.preventDefault();
+          event.stopPropagation();
+
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
 
 input.oninput = function(event) {
     event.target.setCustomValidity("");
