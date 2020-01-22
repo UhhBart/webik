@@ -453,6 +453,7 @@ def playlists():
     for i in range(len(playlist_id)):
         playlist_name = db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=playlist_id[i]["group_id"])
         ids.append(playlist_name[0]["group_name"])
+
     return render_template("playlists.html", ids=ids)
 
 
