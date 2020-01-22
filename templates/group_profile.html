@@ -55,7 +55,7 @@
             <div>
                 <input class="d-block btn btn-outline-light"  type="submit" value="Upvote!"><br>
                 {%if link[0]==current_user%}
-                    <a href="/deletesong?track_id={{link[4]}}"><button id="delete-song-button" id= 'deletesong' type="button" onclick= "deleted()">Delete</button></a>
+                    <a href="/deletesong?track_id={{link[4]}}"><button id="delete-playlist-button" id= 'deletesong' type="button" onclick= "deleted()">Delete</button></a>
                 {%endif%}
 
             </div>

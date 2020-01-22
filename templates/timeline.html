@@ -9,8 +9,9 @@
 
     </head>
 {% block main %}
-        <h3 align = "center">Welcome home, {{ name[0]["username"]}}!</h3>
+        <h1 align = "center">Welcome home, {{ name[0]["username"]}}!</h1>
         <br>
+
         {% if not data %}
             <div class = "form">
                 <strong>Whoops! Looks like there aren't any songs to display here yet!
@@ -21,7 +22,7 @@
         {% for link in data %}
         <div class= "song">
             <div align="center" color=white>
-                <strong>{{link[0][0]["username"]}} uploaded the following song to <a href=/group_profile?name={{ link[3][0]["group_name"]}}>{{ link[3][0]["group_name"] }}:</a></strong>
+                <strong><a class="link" href="/profile?username={{link[0][0]['username']}}">{{link[0][0]["username"]}}</strong></a> uploaded the following song to <a class = "link "href=/group_profile?id={{ link[5][0]["group_id"]}}><strong>{{ link[3][0]["group_name"] }}:</a></strong>
             </div>
             <br>
             <div align="center">

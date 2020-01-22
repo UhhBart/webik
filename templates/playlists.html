@@ -22,8 +22,9 @@
         <div align="center" class="form">
         <ul>
     {% for id in ids %}
-        <h5><li><a href="/group_profile?name={{id}}">{{ id }}</a></li></h5>
+        <h5 align="left"><li><a href="/group_profile?id={{id[1]['group_id']}}">{{ id[0] }}</a></li></h5>
     {% endfor %}
+
         </ul>
         </div>
     {% endif %}

@@ -244,12 +244,14 @@ def timeline():
     # retrieve playlists user is following from database
     groups_ids = db.execute("SELECT group_id FROM group_users WHERE user_id= :user_id", user_id=session["user_id"])
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
+    print(groups_ids)
+
 
     # select all playlist from user
     groups = []
     for group in groups_ids:
         groups.append(group["group_id"])
-
+        print(groups)
     # retrieve proper information from playlists
     data = []
     for group_id in groups:
@@ -260,12 +262,13 @@ def timeline():
             data1 = []
             data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
             youtube = link["link"]
-
+            print(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
             # moet hier door de youtube_api gaan
             data1.append(youtube_api(youtube))
             data1.append(link["time"])
             data1.append(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
             data1.append(link["link_desc"])
+            data1.append(db.execute("SELECT group_id FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
             data.append(data1)
     # most recent songs are at the top of timeline
     data.sort(key=lambda x: x[2], reverse=True)
@@ -330,51 +333,47 @@ def group_profile():
     # getting the info for the group_profile
 
     # aangeleverd
-    group_name = request.args.get("name")
+    group_id = request.args.get("id")
     user_id = session["user_id"]
 
     # select proper information from database
-    description = db.execute("SELECT description FROM groups WHERE group_name= :group_name", group_name=group_name)
-    group_id = db.execute("SELECT group_id FROM groups WHERE group_name= :group_name", group_name=group_name)
+    description = db.execute("SELECT description FROM groups WHERE group_id= :group_id", group_id=group_id)
+    creator_id = db.execute("SELECT creator_id FROM groups WHERE group_id= :group_id", group_id=group_id)
+    group_name = db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=group_id)
 
-
-    creator_id = db.execute("SELECT creator_id FROM groups WHERE group_name= :group_name", group_name=group_name)
+    for group in group_name:
+        group_name = group["group_name"]
     for id in creator_id:
         creator_id = id["creator_id"]
 
-    user_id = session["user_id"]
+
+    # select proper information from database
+    followers = db.execute("SELECT user_id FROM group_users WHERE group_id = :group_id", group_id=group_id)
+    rows = db.execute("SELECT added_by, link, time, link_desc, track_id FROM tracks WHERE group_id= :group_id", group_id=group_id)
+
     #???
-    for group in group_id:
-        group_id = group["group_id"]
+    links = []
+    for link in rows:
+        data1 = []
 
-        # select proper information from database
-        followers = db.execute("SELECT user_id FROM group_users WHERE group_id = :group_id", group_id=group_id)
-        rows = db.execute("SELECT added_by, link, time, link_desc, track_id FROM tracks WHERE group_id= :group_id", group_id=group_id)
+        data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
+        youtube = link["link"]
+        # ???
+        data1.append(youtube_api(youtube))
+        data1.append(link["time"])
+        data1.append(link["link_desc"])
+        data1.append(link["track_id"])
+        links.append(data1)
 
+    # most recent songs are at the top of group_profile
+    links.sort(key=lambda x: x[2], reverse=True)
 
-        #???
-        links = []
-        for link in rows:
-            data1 = []
+    if check_following(group_id, user_id):
+        button = "follow"
+    else:
+        button = "unfollow"
 
-            data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
-            youtube = link["link"]
-            # ???
-            data1.append(youtube_api(youtube))
-            data1.append(link["time"])
-            data1.append(link["link_desc"])
-            data1.append(link["track_id"])
-            links.append(data1)
-
-        # most recent songs are at the top of group_profile
-        links.sort(key=lambda x: x[2], reverse=True)
-
-        if check_following(group_id, user_id):
-            button = "follow"
-        else:
-            button = "unfollow"
-
-        return render_template("group_profile.html", id= group_id, links=links, description=description, group_name=group_name,
+    return render_template("group_profile.html", id= group_id, links=links, description=description, group_name=group_name,
                                 posts=len(rows), followers=len(followers), current_user=current_user, button=button, user_id=user_id, creator_id=creator_id)
 
 
@@ -451,11 +450,14 @@ def playlists():
     playlist_id = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id=session["user_id"])
 
     #???
-    for i in range(len(playlist_id)):
-        playlist_name = db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=playlist_id[i]["group_id"])
-        ids.append(playlist_name[0]["group_name"])
-
-    return render_template("playlists.html", ids=ids)
+    for group_id in playlist_id:
+        test = []
+        playlist_name = db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=group_id["group_id"])
+        test.append(playlist_name[0]["group_name"])
+        test.append(group_id)
+        ids.append(test)
+    print(ids)
+    return render_template("playlists.html", ids=ids, playlist_id=playlist_id)
 
 
 @app.route("/profile", methods=["GET"])
