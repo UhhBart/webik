@@ -374,7 +374,7 @@ def group_profile():
             button = "unfollow"
 
         return render_template("group_profile.html", id= group_id, links=links, description=description, group_name=group_name,
-                                posts=len(rows), followers=len(followers), current_user=current_user, button=button)
+                                posts=len(rows), followers=len(followers), current_user=current_user, button=button, user_id=user_id, creator_id=creator_id)
 
 
 @app.route("/upload", methods=["GET", "POST"])
