@@ -8,8 +8,8 @@
 
 {% block main %}
         <div align="center">
+            <p><h1 align="center"><u>{{ group_name }}</u>  <a href="/upload"><button id="upload-button" type="button">+ Upload</button></a></h5></h1></p>
 
-            <p><h1 align="center" color=white>{{ group_name }}</h1></p>
             {% if creator_id == user_id%}
                 <p><h10>You are the creator of this playlist</h10></p>
             {% endif %}
@@ -18,7 +18,7 @@
             <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) |
 
             {% if creator_id == user_id%}
-                <a href="/deleteplaylist?group_id={{id}}"><button id= 'deleteplaylist' type="button" onclick= "deleted()">Delete Playlist</button></a>
+                <a href="/deleteplaylist?group_id={{id}}"><button id= 'delete-playlist-button' type="button" onclick= "deleted()">Delete Playlist</button></a>
             {% else %}
                 {% if button == "follow"%}
                     <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a></h5>
@@ -55,7 +55,7 @@
             <div>
                 <input class="d-block btn btn-outline-light"  type="submit" value="Upvote!"><br>
                 {%if link[0]==current_user%}
-                    <a href="/deletesong?track_id={{link[4]}}"><button class="d-block btn btn-outline-light" id= 'deletesong' type="button" onclick= "deleted()">Delete</button></a>
+                    <a href="/deletesong?track_id={{link[4]}}"><button id="delete-song-button" id= 'deletesong' type="button" onclick= "deleted()">Delete</button></a>
                 {%endif%}
 
             </div>

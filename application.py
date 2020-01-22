@@ -361,7 +361,9 @@ def group_profile():
             youtube = link["link"]
             # ???
             data1.append(youtube_api(youtube))
-            data1.append(link["time"], link["link_desc"], link["track_id"])
+            data1.append(link["time"])
+            data1.append(link["link_desc"])
+            data1.append(link["track_id"])
             links.append(data1)
 
         # most recent songs are at the top of group_profile
@@ -489,7 +491,7 @@ def deleteplaylist():
     group_id = request.args.get("group_id")
 
     db.execute("DELETE FROM groups WHERE group_id= :group_id", group_id = group_id)
-    db.execute("DELETE FROM group_user WHERE group_id= :group_id", group_id = group_id)
+    db.execute("DELETE FROM group_users WHERE group_id= :group_id", group_id = group_id)
     db.execute("DELETE FROM tracks WHERE group_id= :group_id", group_id = group_id)
     return jsonify("deleted")
 
