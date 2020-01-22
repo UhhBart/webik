@@ -9,18 +9,20 @@
 {% block main %}
         <div align="center">
             <p><h1 align="center" color=white>{{ group_name }}</h1></p>
-
+            {% if creator_id == user_id%}
+                <p><h10>You are the creator of this playlist</h10></p>
+            {% endif %}
             <br>
 
             <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) |
-            {% if button == "follow"%}
-                <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a></h5>
-            {% else %}
-                <a href="/follow?name={{id}}"><button id="follow-button" type="button">+ Follow!</button></a></h5>
-            {% endif %}
-
             {% if creator_id == user_id%}
-                <a href"/deleteplaylist?group_id={{id}}"><button id= 'deleteplaylist' type="button" >Delete Playlist</button></a>
+                <a href="/deleteplaylist?group_id={{id}}"><button id= 'deleteplaylist' type="button" onclick= "deleted()">Delete Playlist</button></a>
+            {% else %}
+                {% if button == "follow"%}
+                    <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a></h5>
+                {% else %}
+                    <a href="/follow?name={{id}}"><button id="follow-button"  type="button">+ Follow!</button></a></h5>
+                {% endif %}
             {% endif %}
 
         </div>
@@ -51,7 +53,7 @@
             <div>
                 <input class="d-block btn btn-outline-light"  type="submit" value="Upvote!"><br>
                 {%if link[0]==current_user%}
-                    <a href"/deletesong?track_id={{link[4]}}"><button class="d-block btn btn-outline-light" id= 'deletesong' name="buttondelete" type="button" >Delete</button></a>
+                    <a href="/deletesong?track_id={{link[4]}}"><button class="d-block btn btn-outline-light" id= 'deletesong' type="button" onclick= "deleted()">Delete</button></a>
                 {%endif%}
 
             </div>
@@ -66,42 +68,16 @@
     var unfollow = document.getElementById("unfollow-button")
 
 
-        // function deleted() {
-        //     console.log("hoi")
-        //     var returndialog = confirm("Are you sure you want to delete this song.");
-        //     if (returndialog == true) {
-        //         console.log("oke")
+        function deleted() {
+            console.log("hoi")
+            var returndialog = confirm("Are you sure you want to delete this song.");
+            if (returndialog == true) {
+                console.log("oke")
 
-        //     } else {
-        //         console.log("no")
-        //     }
-        // };
-
-//onclick= "deleted()"
-
-    // }
-
-    // const deletebuttons = document.querySelectorAll(".buttondelete")
-    // for (const button of deletebuttons) {
-    //     button.addEventListener("click", getinfo())
-    // }
-
-    // function getinfo(e) {
-
-    //     var info = document.getElementsByTagName("buttondelete").id;
-
-    //     $ajax({
-    //         type: "POST",
-    //         url: '{'/delete'}',
-    //         data: info
-    //         });
-
-    //     }
-    //     console.log(e)
-
-    // Functie naar python aanroepen, input = info
-
-    // link python function from javascript (ajax request)
+            } else {
+                console.log("no")
+            }
+        };
 
     </script>
 {% endblock %}

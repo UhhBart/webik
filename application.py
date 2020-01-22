@@ -468,8 +468,8 @@ def profile():
 def deletesong():
 
     track_id = request.args.get("track_id")
-
     db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
+    return jsonify("deleted")
 
 
 @app.route("/deleteplaylist")
@@ -479,8 +479,9 @@ def deleteplaylist():
     group_id = request.args.get("group_id")
 
     db.execute("DELETE FROM groups WHERE group_id= :group_id", group_id = group_id)
-    # er moet nog meer worden verwijderd maar dit is de basis
-
+    db.execute("DELETE FROM group_user WHERE group_id= :group_id", group_id = group_id)
+    db.execute("DELETE FROM tracks WHERE group_id= :group_id", group_id = group_id)
+    return jsonify("deleted")
 
 # # copied from finance
 # def errorhandler(e):
