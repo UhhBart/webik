@@ -461,6 +461,7 @@ def profile():
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
     return render_template("profile.html", name=name)
 
+
 @app.route("/deletesong")
 @login_required
 def deletesong():
