@@ -313,6 +313,7 @@ def create():
                    user_id=session["user_id"],
                    group_id=gr_id)
 
+        flash("Playlist created!")
         return redirect(url_for("playlists"))
 
     else:
@@ -459,8 +460,19 @@ def playlists():
 
 @app.route("/profile", methods=["GET"])
 def profile():
-    name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
-    return render_template("profile.html", name=name)
+    """Allow users to view their own or somebody else's profile"""
+    user = request.args.get("username")
+    if user:
+        user_id = (db.execute("SELECT user_id FROM users WHERE username = :username", username=user))[0]["user_id"]
+
+    else:
+        user_id = session["user_id"]
+
+    name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=user_id)
+    uploads = db.execute("SELECT link FROM tracks WHERE added_by = :added_by", added_by=user_id)
+    playlists = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id=user_id)
+    return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists))
+
 
 
 @app.route("/deletesong")

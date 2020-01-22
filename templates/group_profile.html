@@ -8,15 +8,15 @@
 
 {% block main %}
         <div align="center">
-            <p><h1 align="center" color=white><u>{{ group_name }}</u>  <a href="/upload"><button id="upload-button" type="button">+</button></a></h5></h1></p>
+            <p><h1 align="center" color=white><u>{{ group_name }}</u>  <a href="/upload"><button id="upload-button" type="button">+ Upload</button></a></h5></h1></p>
 
             <br>
 
             <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) |
             {% if button == "follow"%}
-                <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a></h5>
+                <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a>
             {% else %}
-                <a href="/follow?name={{id}}"><button id="follow-button" type="button">+ Follow!</button></a></h5>
+                <a href="/follow?name={{id}}"><button id="follow-button" type="button">+ Follow!</button></a>
             {% endif %}
 
             {% if creator_id == user_id%}
