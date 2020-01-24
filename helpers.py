@@ -55,3 +55,10 @@ def link_check(link):
     else:
         return False
 
+def check_liked(user_id, track_id):
+
+    check_liked = db.execute("SELECT user_id FROM users_likedtracks WHERE track_id = :track_id", track_id=track_id)
+
+    for i in check_liked:
+        if i["user_id"] == user_id:
+            return True

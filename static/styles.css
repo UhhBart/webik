@@ -68,7 +68,7 @@ border-radius: 15px 50px 30px;
 #follow-button:hover {
   color: #000000;
   font-size: 10pt;
-  background-color: #00e32a;
+  background-color: rgba(50, 255, 50, 0.66);
   border: 1px;
   border-radius: 3px;
   width: 85px;
@@ -80,7 +80,7 @@ border-radius: 15px 50px 30px;
 
 #unfollow-button {
   font-size: 10pt;
-  background-color: #00e32a;
+  background-color: rgba(255, 255, 255, 0.33);
   border: 1px;
   border-radius: 3px;
   width: 85px;
@@ -92,7 +92,7 @@ border-radius: 15px 50px 30px;
 
 #unfollow-button:hover {
   font-size: 10pt;
-  background-color: #e30000;
+  background-color: rgba(255, 50, 50, 0.66);
   border: 1px;
   border-radius: 3px;
   width: 85px;
@@ -102,3 +102,152 @@ border-radius: 15px 50px 30px;
   cursor: hand;
 }
 
+#upload-button {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(255, 255, 255, 0.33);
+  border: 1px;
+  border-radius: 3px;
+  width: 85px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
+
+#upload-button:hover {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(50, 255, 50, 0.66);
+  border: 1px;
+  border-radius: 3px;
+  width: 85px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
+
+#delete-playlist-button {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(255, 60, 60, 0.75);
+  border: 1px;
+  border-color: red;
+  border-radius: 3px;
+  width: 120px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
+
+#delete-playlist-button:hover {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(255, 20, 20, 0.85);
+  border: 1px;
+  border-radius: 3px;
+  width: 120px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
+
+#delete-song-button {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(255, 60, 60, 0.75);
+  border: 1px;
+  border-color: red;
+  border-radius: 3px;
+  width: 75px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
+
+#delete-song-button:hover {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(255, 20, 20, 0.85);
+  border: 1px;
+  border-radius: 3px;
+  width: 75px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
+
+.link {
+    text-decoration: underline;
+    color: black;
+}
+
+#counter {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(255, 255, 255, 0.33);
+  border: 1px;
+  border-radius: 3px;
+  width: 85px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
+
+#like-button {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(255, 255, 255, 0.33);
+  border: 1px;
+  border-radius: 3px;
+  width: 85px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
+
+#like-button:hover {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(50, 255, 50, 0.66);
+  border: 1px;
+  border-radius: 3px;
+  width: 85px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
+
+#unlike-button {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(255, 255, 255, 0.33);
+  border: 1px;
+  border-radius: 3px;
+  width: 85px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
+
+#unlike-button:hover {
+  color: #000000;
+  font-size: 10pt;
+  background-color: rgba(255, 50, 50, 0.66);
+  border: 1px;
+  border-radius: 3px;
+  width: 85px;
+  height: 30px;
+  top: 50px;
+  left: 50px;
+  cursor: hand;
+}
