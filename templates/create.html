@@ -36,18 +36,18 @@
 // source: https://jsfiddle.net/pmw57/2zqcqpzx/1/
 var input = document.querySelector("[name=playlist]");
 let took = document.getElementById('took');
-let name = document.getElementById("playlist")
-console.log(took, name)
+let name = document.getElementById("playlist");
+console.log(took, name);
 
 function checking() {
     $.get("/check_group?playlist=" + name.value, function(main) {
         if (main == false) {
-            took.innerHTML = "Playlist name already taken"
+            took.innerHTML = "Playlist name already taken";
             name.setAttribute("class", "form-control is-invalid");
             document.getElementById('create').disabled = true;
-            n
+
         } else {
-            took.innerHTML = "Playlist name available"
+            took.innerHTML = "Playlist name available";
             name.setAttribute("class", "form-control");
             document.getElementById('create').disabled = false;
         }
