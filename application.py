@@ -192,17 +192,17 @@ def check():
     return jsonify(True)
 
 
-@app.route("/check_group", methods=["GET"])
-def check_group():
-    """Check groupname availability"""
+@app.route("/check_playlist", methods=["GET"])
+def check_playlist():
+    """Check playlistname availability"""
 
-    # retrieve group name
-    group_name = request.args.get("playlist")
+    # retrieve playlist name
+    playlist_name = request.args.get("playlist")
 
-    # check whether group name already in database
-    DB = db.execute("SELECT group_name FROM groups WHERE group_name=:group_name", group_name=group_name)
+    # check whether playlist name already in database
+    DB = db.execute("SELECT playlist_name FROM playlists WHERE playlist_name=:playlist_name", playlist_name=playlist_name)
 
-    # return false if group name already exists
+    # return false if playlist name already exists
     if len(DB) != 0:
         return jsonify(False)
 
@@ -243,18 +243,18 @@ def timeline():
     """Show timeline with posts from playlists user is following"""
 
     # retrieve playlists user is following from database
-    groups_ids = db.execute("SELECT group_id FROM group_users WHERE user_id= :user_id", user_id=session["user_id"])
+    playlists_ids = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id= :user_id", user_id=session["user_id"])
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
-    groups, data = [], []
+    playlists, data = [], []
 
     # select all playlist from user
-    for group in groups_ids:
-        groups.append(group["group_id"])
-        print(groups)
+    for playlist in playlists_ids:
+        playlists.append(playlist["playlist_id"])
+        print(playlists)
 
     # retrieve proper information from playlists
-    for group_id in groups:
-        rows = db.execute("SELECT group_id, added_by, link, time, link_desc, likes, track_id FROM tracks WHERE group_id= :group_id", group_id=group_id)
+    for playlist_id in playlists:
+        rows = db.execute("SELECT playlist_id, added_by, link, time, link_desc, likes, track_id FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
 
         #???
         for link in rows:
@@ -265,9 +265,9 @@ def timeline():
             # making lists with important data for timeline
             data1.append(youtube_api(youtube))
             data1.append(link["time"])
-            data1.append(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
+            data1.append(db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
             data1.append(link["link_desc"])
-            data1.append(db.execute("SELECT group_id FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
+            data1.append(db.execute("SELECT playlist_id FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
             data1.append(link["likes"])
             data1.append(link["track_id"])
 
@@ -289,16 +289,16 @@ def search():
     new = []
     # searchInput = request.args.get("search")
     # print(searchInput, request.args.get("search"))
-    groups = db.execute("SELECT group_name FROM groups")
-    print(groups, (request.args.get("q")))
+    playlists = db.execute("SELECT playlist_name FROM playlists")
+    print(playlists, (request.args.get("q")))
 
-    # return render_template("/general_homepage.html", groups=groups)
-    for playlist in groups:
-        playlist["group_name"] = playlist["group_name"].lower()
-        print(playlist["group_name"].startswith(request.args.get("q")))
+    # return render_template("/general_homepage.html", playlists=playlists)
+    for playlist in playlists:
+        playlist["playlist_name"] = playlist["playlist_name"].lower()
+        print(playlist["playlist_name"].startswith(request.args.get("q")))
 
-        if playlist["group_name"].startswith(request.args.get('q')):
-            new.append(playlist["group_name"])
+        if playlist["playlist_name"].startswith(request.args.get('q')):
+            new.append(playlist["playlist_name"])
 
     return new
 
@@ -309,21 +309,21 @@ def create():
     if request.method == "POST":
 
         # put new playlist information into database
-        db.execute("INSERT INTO groups (group_name, description, creator_id) VALUES(:group_name, :description, :creator_id)",
-                   group_name=request.form.get("playlist"),
+        db.execute("INSERT INTO playlists (playlist_name, description, creator_id) VALUES(:playlist_name, :description, :creator_id)",
+                   playlist_name=request.form.get("playlist"),
                    description=request.form.get("description"),
                    creator_id = session['user_id'])
 
-        # link creator to group
-        group_id = db.execute("SELECT group_id FROM groups WHERE group_name= :group_name", group_name=request.form.get("playlist"))
+        # link creator to playlist
+        playlist_id = db.execute("SELECT playlist_id FROM playlists WHERE playlist_name= :playlist_name", playlist_name=request.form.get("playlist"))
 
         # ???
-        for group in group_id:
-            gr_id = group["group_id"]
+        for playlist in playlist_id:
+            gr_id = playlist["playlist_id"]
 
-        db.execute("INSERT INTO group_users (group_id, user_id) VALUES(:group_id, :user_id)",
+        db.execute("INSERT INTO playlist_users (playlist_id, user_id) VALUES(:playlist_id, :user_id)",
                    user_id=session["user_id"],
-                   group_id=gr_id)
+                   playlist_id=gr_id)
 
         flash("Playlist created!")
         return redirect(url_for("playlists"))
@@ -332,33 +332,33 @@ def create():
         return render_template("create.html")
 
 
-@app.route("/group_profile")
+@app.route("/playlist_profile")
 @login_required
-def group_profile():
+def playlist_profile():
     """Show playlist with all uploaded songs"""
 
     current_user = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = session["user_id"])
 
-    # getting the info for the group_profile
+    # getting the info for the playlist_profile
 
     # aangeleverd
-    group_id = request.args.get("id")
+    playlist_id = request.args.get("id")
     user_id = session["user_id"]
 
     # select proper information from database
-    description = db.execute("SELECT description FROM groups WHERE group_id= :group_id", group_id=group_id)
-    creator_id = db.execute("SELECT creator_id FROM groups WHERE group_id= :group_id", group_id=group_id)
-    group_name = db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=group_id)
+    description = db.execute("SELECT description FROM playlists WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
+    creator_id = db.execute("SELECT creator_id FROM playlists WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
+    playlist_name = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=playlist_id)
 
-    for group in group_name:
-        group_name = group["group_name"]
+    for playlist in playlist_name:
+        playlist_name = playlist["playlist_name"]
     for id in creator_id:
         creator_id = id["creator_id"]
 
 
     # select proper information from database
-    followers = db.execute("SELECT user_id FROM group_users WHERE group_id = :group_id", group_id=group_id)
-    rows = db.execute("SELECT added_by, link, time, link_desc, track_id, likes FROM tracks WHERE group_id= :group_id", group_id=group_id)
+    followers = db.execute("SELECT user_id FROM playlist_users WHERE playlist_id = :playlist_id", playlist_id=playlist_id)
+    rows = db.execute("SELECT added_by, link, time, link_desc, track_id, likes FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
 
     #???
     links = []
@@ -379,15 +379,15 @@ def group_profile():
             data1.append("unliked")
         links.append(data1)
         print(links)
-    # most recent songs are at the top of group_profile
+    # most recent songs are at the top of playlist_profile
     links.sort(key=lambda x: x[2], reverse=True)
 
-    if check_following(group_id, user_id):
+    if check_following(playlist_id, user_id):
         button = "follow"
     else:
         button = "unfollow"
 
-    return render_template("group_profile.html", id= group_id, links=links, description=description, group_name=group_name,
+    return render_template("playlist_profile.html", id= playlist_id, links=links, description=description, playlist_name=playlist_name,
                                 posts=len(rows), followers=len(followers), current_user=current_user, button=button, user_id=user_id, creator_id=creator_id)
 
 
@@ -398,19 +398,19 @@ def add_number():
 
     # create form with proper information for user to upload a track
     if request.method == "GET":
-        group_names = []
-        groups = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id=session["user_id"])
+        playlist_names = []
+        playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=session["user_id"])
 
-        for group in groups:
-            group_id = group["group_id"]
-            group_names.append(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=group_id))
+        for playlist in playlists:
+            playlist_id = playlist["playlist_id"]
+            playlist_names.append(db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=playlist_id))
 
-        return render_template("upload.html", groups=group_names)
+        return render_template("upload.html", playlists=playlist_names)
 
     elif request.method == "POST":
 
         # retrieve proper information
-        group = request.form.get("group")
+        playlist = request.form.get("playlist")
         link = request.form.get("link")
 
         if not link_check(link):
@@ -419,9 +419,9 @@ def add_number():
         link_desc = request.form.get("link_desc")
 
         # add track to database
-        group_id = db.execute("SELECT group_id FROM groups WHERE group_name = :group_name", group_name=group)
-        db.execute("INSERT INTO tracks (group_id, link, added_by, link_desc) VALUES(:group_id, :link, :added_by, :link_desc)",
-                   group_id=group_id[0]["group_id"], link=link, added_by=session["user_id"], link_desc=link_desc)
+        playlist_id = db.execute("SELECT playlist_id FROM playlists WHERE playlist_name = :playlist_name", playlist_name=playlist)
+        db.execute("INSERT INTO tracks (playlist_id, link, added_by, link_desc) VALUES(:playlist_id, :link, :added_by, :link_desc)",
+                   playlist_id=playlist_id[0]["playlist_id"], link=link, added_by=session["user_id"], link_desc=link_desc)
 
         # inform user upload was succesful and redirect to timeline
         flash("Upload succesful!")
@@ -431,7 +431,7 @@ def add_number():
 @app.route("/results")
 def results():
     # shows the results based on the users input in search
-    # return to a specific group profile, from here the user can follow this group, so returns to /group_profile
+    # return to a specific playlist profile, from here the user can follow this playlist, so returns to /playlist_profile
     return None
 
 
@@ -440,16 +440,16 @@ def results():
 def follow():
     """Allow users to follow playlists"""
 
-    group_id = request.args.get("name")
+    playlist_id = request.args.get("name")
     user_id = session["user_id"]
 
-    if check_following(group_id, user_id):
-        db.execute("DELETE FROM group_users WHERE group_id = :group_id AND user_id = :user_id", group_id=group_id, user_id=session["user_id"])
+    if check_following(playlist_id, user_id):
+        db.execute("DELETE FROM playlist_users WHERE playlist_id = :playlist_id AND user_id = :user_id", playlist_id=playlist_id, user_id=session["user_id"])
         return jsonify("Unfollowed")
 
     else:
-        db.execute("INSERT INTO group_users (user_id, group_id) VALUES(:user_id, :group_id)",
-                   user_id=session["user_id"], group_id=group_id)
+        db.execute("INSERT INTO playlist_users (user_id, playlist_id) VALUES(:user_id, :playlist_id)",
+                   user_id=session["user_id"], playlist_id=playlist_id)
         return jsonify("Followed")
 
     return render_template("apology.html")
@@ -461,14 +461,14 @@ def playlists():
 
     #
     ids = []
-    playlist_id = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id=session["user_id"])
+    playlist_id = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=session["user_id"])
 
     #???
-    for group_id in playlist_id:
+    for playlist_id in playlist_id:
         test = []
-        playlist_name = db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=group_id["group_id"])
-        test.append(playlist_name[0]["group_name"])
-        test.append(group_id)
+        playlist_name = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=playlist_id["playlist_id"])
+        test.append(playlist_name[0]["playlist_name"])
+        test.append(playlist_id)
         ids.append(test)
     print(ids)
 
@@ -487,7 +487,7 @@ def profile():
 
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=user_id)
     uploads = db.execute("SELECT link FROM tracks WHERE added_by = :added_by", added_by=user_id)
-    playlists = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id=user_id)
+    playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=user_id)
 
     return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists))
 
@@ -497,6 +497,7 @@ def profile():
 def deletesong():
 
     track_id = request.args.get("track_id")
+    print(track_id)
     db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
     return jsonify("deleted")
 
@@ -505,11 +506,11 @@ def deletesong():
 @login_required
 def deleteplaylist():
 
-    group_id = request.args.get("group_id")
+    playlist_id = request.args.get("playlist_id")
 
-    db.execute("DELETE FROM groups WHERE group_id= :group_id", group_id = group_id)
-    db.execute("DELETE FROM group_users WHERE group_id= :group_id", group_id = group_id)
-    db.execute("DELETE FROM tracks WHERE group_id= :group_id", group_id = group_id)
+    db.execute("DELETE FROM playlists WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
+    db.execute("DELETE FROM playlist_users WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
+    db.execute("DELETE FROM tracks WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
     return jsonify("deleted")
 
 @app.route("/upvote")

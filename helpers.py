@@ -38,11 +38,11 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def check_following(group_id, user_id):
+def check_following(playlist_id, user_id):
     """Functions that checks if playlist is followed by user"""
 
-    check_follow = db.execute("SELECT user_id FROM group_users WHERE group_id = :group_id",
-                              group_id=group_id)
+    check_follow = db.execute("SELECT user_id FROM playlist_users WHERE playlist_id = :playlist_id",
+                              playlist_id=playlist_id)
     for i in check_follow:
         if i["user_id"] == user_id:
             return True

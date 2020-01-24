@@ -3,12 +3,12 @@
 <!DOCTYPE html>
 
 {% block title %}
-    Group Profile
+    playlist Profile
 {% endblock %}
 
 {% block main %}
         <div align="center">
-            <p><h1 align="center"><u>{{ group_name }}</u>  <a href="/upload"><button id="upload-button" type="button">+ Upload</button></a></h5></h1></p>
+            <p><h1 align="center"><u>{{ playlist_name }}</u>  <a href="/upload"><button id="upload-button" type="button">+ Upload</button></a></h5></h1></p>
 
             {% if creator_id == user_id%}
                 <p><h10>You are the creator of this playlist</h10></p>
@@ -18,7 +18,7 @@
             <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) |
 
             {% if creator_id == user_id%}
-                <a href="/deleteplaylist?group_id={{id}}"><button id= 'delete-playlist-button' class="btn btn-outline-danger" type="button" onclick= "deleted()">Delete Playlist</button></a>
+                <a href="/deleteplaylist?playlist_id={{id}}"><button id= 'delete-playlist-button' class="btn btn-outline-danger" type="button" onclick= "deleted()">Delete Playlist</button></a>
             {% else %}
                 {% if button == "follow" %}
                     <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a></h5>
@@ -38,17 +38,18 @@
         {% for link in links %}
         <div class= "song">
             <div align="center" color=white>
-                <strong>{{link[0][0]["username"]}} uploaded the following song:</strong>
+                <a href="/profile?username={{link[0][0]['username']}}"><strong>{{link[0][0]["username"]}}</strong></a> uploaded the following song:
             </div>
             <br>
             <div align="center">
                 <iframe width="420" height="315"
                     src="https://www.youtube.com/embed/{{link[1]}}">
                 </iframe>
-
+            </div>
             {% if link[3] %}
                 <div class = "comment">
                     {{ link[3] }}
+
                 </div>
             {% endif %}
 
@@ -59,18 +60,20 @@
                 </div>
             {% else %}
                 <div>
-                {{link[5]}} Likes |
-                <a href="/upvote?track_id={{link[4]}}"><button id="unlike-button" type="button">Liked</button></a>
+                    {{link[5]}} Likes |
+                    <a href="/upvote?track_id={{link[4]}}"><button id="unlike-button" type="button">- Unlike</button></a>
                 </div>
+
             {% endif %}
             <br>
 
-            </div>
+
                 Uploaded at {{link[2]}}
                 {%if link[0]==current_user%}
-                    | <a href="/deletesong?track_id={{link[4]}}"><button id="delete-song-button" id= 'deletesong' type="button" onclick= "deleted()">Delete</button></a>
+                    | <a href="/deletesong?track_id={{link[4]}}"><button id="delete-song-button" type="button" onclick= "deleted()">Delete</button></a>
                 {%endif%}
             </div>
+
         <br>
         {% endfor %}
 

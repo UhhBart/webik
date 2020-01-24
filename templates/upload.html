@@ -12,11 +12,11 @@
         </div>
         <form class="form" action= "/upload" method="POST" name="upload" >
         <div>
-            <p align="left"><strong>Select group</strong></p>
-            <select class = form-control name = "group">
-                <option disabled selected value>Group</option>
-                {% for group in groups%}
-                <option>{{group[0]["group_name"]}}</option>
+            <p align="left"><strong>Select playlist</strong></p>
+            <select class = form-control name = "playlist">
+                <option disabled selected value>playlist</option>
+                {% for playlist in playlists%}
+                <option>{{playlist[0]["playlist_name"]}}</option>
                 {% endfor %}
             </select>
         <br>
