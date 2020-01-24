@@ -77,10 +77,11 @@ def change_password():
 
     if request.method == "POST":
 
-        # ensure the user put in old and new passwords
+        # ensure the user put in old passwords
         if not request.form.get("old_password"):
             return render_template("apology.html", message="Please enter your old password")
 
+        # ensure the user to put in new password and confirmation of the new passord
         elif not request.form.get("new_password"):
             return render_template("apology.html", message="Please enter your new password")
 
@@ -103,6 +104,7 @@ def change_password():
         db.execute("UPDATE users SET hash = :hash WHERE user_id = :user_id",
                    user_id=session["user_id"], hash=hash)
 
+        # giving the user a message that the password is changed
         flash("Password changed!")
         return redirect("/timeline")
 
@@ -114,35 +116,35 @@ def change_password():
 def login():
     """Log user in"""
 
-    # Forget any user_id
+    # forget any user_id
     session.clear()
 
-    # User reached route via POST (as by submitting a form via POST)
+    # user reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        # Ensure username was submitted
+        # ensure username was submitted
         if not request.form.get("username"):
             return render_template("apology.html", message="must provide username")
 
-        # Ensure password was submitted
+        # ensure password was submitted
         elif not request.form.get("password"):
             return render_template("apology.html", message="must provide password")
 
-        # Query database for username
+        # query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username",
                           username=request.form.get("username"))
 
-        # Ensure username exists and password is correct
+        # ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
             return render_template("apology.html", message="invalid username and/or password")
 
-        # Remember which user has logged in
+        # remember which user has logged in
         session["user_id"] = rows[0]["user_id"]
 
-        # Redirect user to home page
+        # redirect user to home page
         return redirect("/timeline")
 
-    # User reached route via GET (as by clicking a link or via redirect)
+    # user reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("login.html")
 
@@ -151,10 +153,10 @@ def login():
 def logout():
     """Log user out"""
 
-    # Forget any user_id
+    # forget any user_id
     session.clear()
 
-    # Redirect user to login form
+    # redirect user to login form
     return redirect("/")
 
 
@@ -209,9 +211,8 @@ def check_group():
 @app.route("/check_login_username", methods=["GET"])
 def check_login_username():
     """Check username availability"""
+
     # Query database for username
-
-
     rows = db.execute("SELECT * FROM users WHERE username = :username",
                       username=request.args.get("username"))
 
@@ -226,15 +227,15 @@ def check_login_username():
 def check_login_password():
     """Check username availability"""
 
-
     # Query database for username
     rows = db.execute("SELECT * FROM users WHERE username = :username",
                       username=request.args.get("username"))
+
+    # checking the password
     if not check_password_hash(rows[0]["hash"], request.args.get("password")):
         return jsonify(False)
     else:
         return jsonify(True)
-
 
 @app.route("/timeline")
 @login_required
@@ -244,14 +245,14 @@ def timeline():
     # retrieve playlists user is following from database
     groups_ids = db.execute("SELECT group_id FROM group_users WHERE user_id= :user_id", user_id=session["user_id"])
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
+    groups, data = [], []
 
     # select all playlist from user
-    groups = []
     for group in groups_ids:
         groups.append(group["group_id"])
         print(groups)
+
     # retrieve proper information from playlists
-    data = []
     for group_id in groups:
         rows = db.execute("SELECT group_id, added_by, link, time, link_desc, likes, track_id FROM tracks WHERE group_id= :group_id", group_id=group_id)
 
@@ -261,7 +262,7 @@ def timeline():
             data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
             youtube = link["link"]
 
-            # moet hier door de youtube_api gaan
+            # making lists with important data for timeline
             data1.append(youtube_api(youtube))
             data1.append(link["time"])
             data1.append(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
@@ -269,11 +270,14 @@ def timeline():
             data1.append(db.execute("SELECT group_id FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
             data1.append(link["likes"])
             data1.append(link["track_id"])
+
             if check_liked(session["user_id"], link["track_id"]):
                 data1.append("liked")
+
             else:
                 data1.append("unliked")
             data.append(data1)
+
     # most recent songs are at the top of timeline
     data.sort(key=lambda x: x[2], reverse=True)
     return render_template("timeline.html", data=data, name=name)
@@ -281,21 +285,22 @@ def timeline():
 
 @app.route("/search", methods=["GET"])
 def search():
+
     new = []
     # searchInput = request.args.get("search")
     # print(searchInput, request.args.get("search"))
     groups = db.execute("SELECT group_name FROM groups")
     print(groups, (request.args.get("q")))
+
     # return render_template("/general_homepage.html", groups=groups)
     for playlist in groups:
         playlist["group_name"] = playlist["group_name"].lower()
         print(playlist["group_name"].startswith(request.args.get("q")))
+
         if playlist["group_name"].startswith(request.args.get('q')):
             new.append(playlist["group_name"])
 
-    print(new)
     return new
-
 
 @app.route("/create", methods=["GET", "POST"])
 @login_required
@@ -484,7 +489,6 @@ def profile():
     playlists = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id=user_id)
 
     return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists))
-
 
 
 @app.route("/deletesong")
