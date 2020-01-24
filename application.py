@@ -477,6 +477,7 @@ def playlists():
 @app.route("/profile", methods=["GET"])
 def profile():
     """Allow users to view their own or somebody else's profile"""
+
     user = request.args.get("username")
     if user:
         user_id = (db.execute("SELECT user_id FROM users WHERE username = :username", username=user))[0]["user_id"]
