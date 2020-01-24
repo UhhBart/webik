@@ -459,7 +459,7 @@ def follow():
 def playlists():
     """Allow users to view the playlists they're following"""
 
-    #???
+    #
     ids = []
     playlist_id = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id=session["user_id"])
 
@@ -471,8 +471,8 @@ def playlists():
         test.append(group_id)
         ids.append(test)
     print(ids)
-    return render_template("playlists.html", ids=ids, playlist_id=playlist_id)
 
+    return render_template("playlists.html", ids=ids, playlist_id=playlist_id)
 
 @app.route("/profile", methods=["GET"])
 def profile():
