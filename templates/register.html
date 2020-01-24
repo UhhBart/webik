@@ -38,7 +38,7 @@
             </div>
             </br>
             <div align="center">
-                <button class="btn btn-primary" type="submit">Register!</button>
+                <button class="btn btn-primary" type="submit" id="register">Register!</button>
             </div>
             <div>
                Already have an account? <br><a href= "login">Log in here!</a>
@@ -63,10 +63,12 @@
             if (checked == false) {
                 alert_user.innerHTML = "Username not available"
                 users_name.setAttribute("class", "form-control is-invalid");
+                document.getElementById('register').disabled = true;
             }
             else {
                 alert_user.innerHTML = "Username available";
                 users_name.setAttribute("class", "form-control");
+                document.getElementById('register').disabled = false;
             }
         });
     }
