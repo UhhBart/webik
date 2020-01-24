@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import login_required, youtube_api, check_following, link_check
+from helpers import login_required, youtube_api, check_following, link_check, check_liked
 
 # Configure application
 app = Flask(__name__)
@@ -244,8 +244,6 @@ def timeline():
     # retrieve playlists user is following from database
     groups_ids = db.execute("SELECT group_id FROM group_users WHERE user_id= :user_id", user_id=session["user_id"])
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
-    print(groups_ids)
-
 
     # select all playlist from user
     groups = []
@@ -255,20 +253,26 @@ def timeline():
     # retrieve proper information from playlists
     data = []
     for group_id in groups:
-        rows = db.execute("SELECT group_id, added_by, link, time, link_desc FROM tracks WHERE group_id= :group_id", group_id=group_id)
+        rows = db.execute("SELECT group_id, added_by, link, time, link_desc, likes, track_id FROM tracks WHERE group_id= :group_id", group_id=group_id)
 
         #???
         for link in rows:
             data1 = []
             data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
             youtube = link["link"]
-            print(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
+
             # moet hier door de youtube_api gaan
             data1.append(youtube_api(youtube))
             data1.append(link["time"])
             data1.append(db.execute("SELECT group_name FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
             data1.append(link["link_desc"])
             data1.append(db.execute("SELECT group_id FROM groups WHERE group_id = :group_id", group_id=link["group_id"]))
+            data1.append(link["likes"])
+            data1.append(link["track_id"])
+            if check_liked(session["user_id"], link["track_id"]):
+                data1.append("liked")
+            else:
+                data1.append("unliked")
             data.append(data1)
     # most recent songs are at the top of timeline
     data.sort(key=lambda x: x[2], reverse=True)
@@ -349,7 +353,7 @@ def group_profile():
 
     # select proper information from database
     followers = db.execute("SELECT user_id FROM group_users WHERE group_id = :group_id", group_id=group_id)
-    rows = db.execute("SELECT added_by, link, time, link_desc, track_id FROM tracks WHERE group_id= :group_id", group_id=group_id)
+    rows = db.execute("SELECT added_by, link, time, link_desc, track_id, likes FROM tracks WHERE group_id= :group_id", group_id=group_id)
 
     #???
     links = []
@@ -363,8 +367,13 @@ def group_profile():
         data1.append(link["time"])
         data1.append(link["link_desc"])
         data1.append(link["track_id"])
+        data1.append(link["likes"])
+        if check_liked(user_id, link["track_id"]):
+           data1.append("liked")
+        else:
+            data1.append("unliked")
         links.append(data1)
-
+        print(links)
     # most recent songs are at the top of group_profile
     links.sort(key=lambda x: x[2], reverse=True)
 
@@ -473,6 +482,7 @@ def profile():
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=user_id)
     uploads = db.execute("SELECT link FROM tracks WHERE added_by = :added_by", added_by=user_id)
     playlists = db.execute("SELECT group_id FROM group_users WHERE user_id = :user_id", user_id=user_id)
+
     return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists))
 
 
@@ -497,6 +507,21 @@ def deleteplaylist():
     db.execute("DELETE FROM tracks WHERE group_id= :group_id", group_id = group_id)
     return jsonify("deleted")
 
+@app.route("/upvote")
+@login_required
+def upvote():
+    track_id = request.args.get("track_id")
+    user_id = session["user_id"]
+
+    if check_liked(user_id, track_id):
+        db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id AND user_id= :user_id", track_id=track_id, user_id=user_id)
+        db.execute("UPDATE tracks SET likes = likes - 1 WHERE track_id = :track_id", track_id=track_id)
+        return jsonify("disliked")
+    else:
+        db.execute("INSERT INTO users_likedtracks (track_id, user_id) VALUES (:track_id, :user_id)", track_id=track_id, user_id=user_id)
+        db.execute("UPDATE tracks SET likes = likes + 1 WHERE track_id = :track_id", track_id=track_id)
+        return jsonify("liked")
+    return render_template("apology.html", messafe = "u broke our site")
 # # copied from finance
 # def errorhandler(e):
 #     """Handle error"""

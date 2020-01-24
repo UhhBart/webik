@@ -38,6 +38,19 @@
                 </div>
             {% endif %}
 
+
+            {% if link[8] != "liked" %}
+                <div>
+                    {{link[6]}} Likes |
+                    <a href="/upvote?track_id={{link[7]}}"><button id="like-button" type="button">+ Like</button></a>
+                </div>
+            {% else %}
+                <div>
+                {{link[6]}} Likes |
+                <a href="/upvote?track_id={{link[7]}}"><button id="unlike-button" type="button">Liked</button></a>
+                </div>
+            {% endif %}
+                <br>
             </div>
             Uploaded at {{link[2]}}
             </div>

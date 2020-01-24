@@ -18,9 +18,9 @@
             <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) |
 
             {% if creator_id == user_id%}
-                <a href="/deleteplaylist?group_id={{id}}"><button id= 'delete-playlist-button' type="button" onclick= "deleted()">Delete Playlist</button></a>
+                <a href="/deleteplaylist?group_id={{id}}"><button id= 'delete-playlist-button' class="btn btn-outline-danger" type="button" onclick= "deleted()">Delete Playlist</button></a>
             {% else %}
-                {% if button == "follow"%}
+                {% if button == "follow" %}
                     <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a></h5>
                 {% else %}
                     <a href="/follow?name={{id}}"><button id="follow-button"  type="button">+ Follow!</button></a></h5>
@@ -52,15 +52,24 @@
                 </div>
             {% endif %}
 
-            <div>
-                <input class="d-block btn btn-outline-light"  type="submit" value="Upvote!"><br>
-                {%if link[0]==current_user%}
-                    <a href="/deletesong?track_id={{link[4]}}"><button id="delete-playlist-button" id= 'deletesong' type="button" onclick= "deleted()">Delete</button></a>
-                {%endif%}
+            {% if link[6] != "liked" %}
+                <div>
+                    {{link[5]}} Likes |
+                    <a href="/upvote?track_id={{link[4]}}"><button id="like-button" type="button">+ Like</button></a>
+                </div>
+            {% else %}
+                <div>
+                {{link[5]}} Likes |
+                <a href="/upvote?track_id={{link[4]}}"><button id="unlike-button" type="button">Liked</button></a>
+                </div>
+            {% endif %}
+            <br>
 
             </div>
-            </div>
                 Uploaded at {{link[2]}}
+                {%if link[0]==current_user%}
+                    | <a href="/deletesong?track_id={{link[4]}}"><button id="delete-song-button" id= 'deletesong' type="button" onclick= "deleted()">Delete</button></a>
+                {%endif%}
             </div>
         <br>
         {% endfor %}
