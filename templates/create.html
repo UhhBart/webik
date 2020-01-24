@@ -13,9 +13,8 @@
         </div>
         <form class="form" action= "/create" method="POST" name="create" id="needs-validation">
             <div>
-                <p align="left"><strong>Name playlist</strong><br>
-                (please don't use spaces)</p>
-                <input class="form-control" id="playlist" name="playlist" type="text" autocomplete="off" placeholder="Enter a playlist name" required pattern="[0-9a-zA-Z_.-]*" onkeyup= "checking()" required>
+                <p align="left"><strong>Name playlist</strong><br></p>
+                <input class="form-control" id="playlist" name="playlist" type="text" autocomplete="off" placeholder="Enter a playlist name" onkeyup= "checking()" required>
                 <div class="invalid-feedback" id="took"> Provide a username </div>
             </div>
             <br>
@@ -72,33 +71,5 @@ function checking() {
     });
   }, false);
 })();
-
-// make sure user doesn't put in any special characters.
-input.oninput = function(event) {
-    event.target.setCustomValidity("");
-};
-input.oninvalid = function(event) {
-    event.target.setCustomValidity("Special characters are not allowed.");
-};
-
-var create = document.getElementById("create");
-
-var specialChars = "<>@!#$%^&*()_+[]{}?:;|'\"\\,./~`-=";
-var checkForSpecialChar = function(string){
- for(i = 0; i < specialChars.length;i++){
-   if(string.indexOf(specialChars[i]) > -1){
-       return true;
-    }
- }
- return false;
-};
-
-var str = document.querySelector("[name=playlist]");
-if(checkForSpecialChar(str)){
-  event.target.setCustomValidity("Special characters are not allowed.");
-  create.preventDefault();
-} else {
-    event.target.setCustomValidity("");
-}
 </script>
 {% endblock %}
