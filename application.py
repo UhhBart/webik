@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import login_required, youtube_api, check_following, link_check, check_liked, yttest
+from helpers import login_required, youtube_api, check_following, link_check, check_liked, yttest, yt_playlist_profile
 
 # Configure application
 app = Flask(__name__)
@@ -384,27 +384,29 @@ def playlist_profile():
     followers = db.execute("SELECT user_id FROM playlist_users WHERE playlist_id = :playlist_id", playlist_id=playlist_id)
     rows = db.execute("SELECT added_by, link, time, link_desc, track_id, likes FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
 
-    #???
-    links = []
-    for link in rows:
-        data1 = []
 
-        data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
-        youtube = link["link"]
-        # ???
-        data1.append(youtube_api(youtube))
-        data1.append(link["time"])
-        data1.append(link["link_desc"])
-        data1.append(link["track_id"])
-        data1.append(link["likes"])
-        if check_liked(user_id, link["track_id"]):
-           data1.append("liked")
-        else:
-            data1.append("unliked")
-        links.append(data1)
-        print(links)
-    # most recent songs are at the top of playlist_profile
-    links.sort(key=lambda x: x[2], reverse=True)
+    yt_playlist_profile(rows, user_id)
+    #???
+    # links = []
+    # for link in rows:
+    #     data1 = []
+
+    #     data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
+    #     youtube = link["link"]
+    #     # ???
+    #     data1.append(youtube_api(youtube))
+    #     data1.append(link["time"])
+    #     data1.append(link["link_desc"])
+    #     data1.append(link["track_id"])
+    #     data1.append(link["likes"])
+    #     if check_liked(user_id, link["track_id"]):
+    #       data1.append("liked")
+    #     else:
+    #         data1.append("unliked")
+    #     links.append(data1)
+    #     print(links)
+    # # most recent songs are at the top of playlist_profile
+    # links.sort(key=lambda x: x[2], reverse=True)
 
     if check_following(playlist_id, user_id):
         button = "follow"
