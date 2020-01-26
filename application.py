@@ -61,9 +61,14 @@ def register():
         elif not password == confirm_password:
             return render_template("apology.html", message="Your passwords don't match, please try again")
 
+        users = db.execute("SELECT username FROM users")
+        for user in users:
+            if username == user["username"]:
+                return render_template("apology.html", message="that username is already taken")
+
         # add the new user's account to the databse
         db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
-                   username=request.form.get("username"), hash=generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
+                  username=request.form.get("username"), hash=generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
 
         return redirect("/timeline")
 
@@ -101,6 +106,7 @@ def change_password():
 
         # change user's password
         hash = generate_password_hash(request.form.get("new_confirmation"), method='pbkdf2:sha256', salt_length=8)
+
         db.execute("UPDATE users SET hash = :hash WHERE user_id = :user_id",
                    user_id=session["user_id"], hash=hash)
 
@@ -308,6 +314,10 @@ def create():
     """Allow user to create new playlists"""
     if request.method == "POST":
 
+        playlists = db.execute("SELECT playlist_name FROM playlists")
+        for playlist in playlists:
+            print(playlist
+            )
         # put new playlist information into database
         db.execute("INSERT INTO playlists (playlist_name, description, creator_id) VALUES(:playlist_name, :description, :creator_id)",
                    playlist_name=request.form.get("playlist"),
@@ -411,10 +421,14 @@ def add_number():
 
         # retrieve proper information
         playlist = request.form.get("playlist")
+        print(playlist)
+        if not playlist:
+            return render_template("apology.html", message = "you did not correctly specifiy to which playlist you'd like to upload.")
+
         link = request.form.get("link")
 
         if not link_check(link):
-            return render_template("apology.html", message = "HOW DARE YOU")
+            return render_template("apology.html", message = "the link you posted doesn't seem to meet our requirements, try generating a link using the share feature on YouTube.")
 
         link_desc = request.form.get("link_desc")
 
@@ -445,12 +459,12 @@ def follow():
 
     if check_following(playlist_id, user_id):
         db.execute("DELETE FROM playlist_users WHERE playlist_id = :playlist_id AND user_id = :user_id", playlist_id=playlist_id, user_id=session["user_id"])
-        return jsonify("Unfollowed")
+        return redirect ("/playlist_profile?id=", playlist_id)
 
     else:
         db.execute("INSERT INTO playlist_users (user_id, playlist_id) VALUES(:user_id, :playlist_id)",
                    user_id=session["user_id"], playlist_id=playlist_id)
-        return jsonify("Followed")
+        return redirect ("/playlist_profile?id=", playlist_id)
 
     return render_template("apology.html")
 
@@ -497,7 +511,12 @@ def profile():
 def deletesong():
 
     track_id = request.args.get("track_id")
-    print(track_id)
+    user_id = session["user_id"]
+    uploader = db.execute("SELECT added_by FROM tracks WHERE track_id = :track_id", track_id=track_id)
+
+    if not user_id == uploader[0]["added_by"]:
+        return render_template("apology.html", message = "looks like you're not the uploader of that song, therefore you're not allowed to delete it")
+
     db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
     return jsonify("deleted")
 
@@ -507,11 +526,16 @@ def deletesong():
 def deleteplaylist():
 
     playlist_id = request.args.get("playlist_id")
+    user_id = session["user_id"]
+    creator = db.execute("SELECT creator_id FROM playlists WHERE playlist_id = :playlist_id", playlist_id=playlist_id)
+
+    if not user_id == creator[0]["creator_id"]:
+        return render_template("apology.html", message = "you are not the creator of this playlist, therefore you're not allowed to delete it")
 
     db.execute("DELETE FROM playlists WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
     db.execute("DELETE FROM playlist_users WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
     db.execute("DELETE FROM tracks WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
-    return jsonify("deleted")
+    return redirect ("/playlists")
 
 @app.route("/upvote")
 @login_required
@@ -528,6 +552,7 @@ def upvote():
         db.execute("UPDATE tracks SET likes = likes + 1 WHERE track_id = :track_id", track_id=track_id)
         return jsonify("liked")
     return render_template("apology.html", messafe = "u broke our site")
+
 # # copied from finance
 # def errorhandler(e):
 #     """Handle error"""

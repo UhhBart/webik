@@ -75,7 +75,7 @@
 
     password.onkeyup = function() {
         passw = password.value
-        if (passw.length <= 8) {
+        if (passw.length < 8) {
             error.innerHTML = "Password must be atleast 8 characters"
             password.setAttribute("class", "form-control is-invalid");
         } else {
