@@ -519,6 +519,8 @@ def profile():
     uploads = db.execute("SELECT link FROM tracks WHERE added_by = :added_by", added_by=user_id)
     playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=user_id)
 
+    # links = userprofile(user_id)
+
     liked_tracks = db.execute("SELECT track_id FROM users_likedtracks WHERE user_id = :user_id", user_id=user_id)
 
     links = []
@@ -538,10 +540,12 @@ def profile():
         playlist_id = playlist_id[0]["playlist_id"]
         playlist = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id = playlist_id)
         link_info.append(playlist[0]["playlist_name"])
+        time = db.execute("SELECT time FROM tracks WHERE track_id = :track_id", track_id = track_id)
+        link_info.append(time[0]["time"])
 
         links.append(link_info)
 
-    print(links)
+    links.sort(key=lambda x: x[4], reverse=True)
 
     return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists), links=links)
 
