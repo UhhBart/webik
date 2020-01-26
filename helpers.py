@@ -89,3 +89,29 @@ def yttest(playlists,data,rows):
         # most recent songs are at the top of timeline
     data.sort(key=lambda x: x[2], reverse=True)
     return data
+
+
+def yt_playlist_profile(rows, user_id):
+
+    links = []
+    for link in rows:
+        data1 = []
+
+        data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
+        youtube = link["link"]
+        # ???
+        data1.append(youtube_api(youtube))
+        data1.append(link["time"])
+        data1.append(link["link_desc"])
+        data1.append(link["track_id"])
+        data1.append(link["likes"])
+        if check_liked(user_id, link["track_id"]):
+           data1.append("liked")
+        else:
+            data1.append("unliked")
+        links.append(data1)
+
+    # most recent songs are at the top of playlist_profile
+    links.sort(key=lambda x: x[2], reverse=True)
+
+    return links
