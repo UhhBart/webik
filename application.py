@@ -61,9 +61,9 @@ def register():
         elif not password == confirm_password:
             return render_template("apology.html", message="Your passwords don't match, please try again")
 
-        users = db.execute("SELECT username FROM users")
-        for user in users:
-            if username == user["username"]:
+        existing_users = db.execute("SELECT username FROM users")
+        for username in existing_users:
+            if username == existing_users  ["username"]:
                 return render_template("apology.html", message="that username is already taken")
 
         # add the new user's account to the databse
@@ -259,7 +259,7 @@ def timeline():
 
     # retrieve proper information from playlists
     for playlist_id in playlists:
-        rows = db.execute("SELECT playlist_id, added_by, link, time, link_desc, likes, track_id FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
+        rows = db.execute("SELECT * FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
 
         yttest(playlists, data, rows)
     # retrieve playlists user is following from database
