@@ -9,10 +9,30 @@
 
     </head>
 {% block main %}
-<div align="center">
-<h1>{{ name[0]["username"] }}</h1>
+    <div align="center">
+    <h1>{{ name[0]["username"] }}</h1>
 
-<h5 align="center">{{uploads}} track(s) uploaded | {{playlists}} playlist(s) followed
-</div>
-    <img src="https://3.bp.blogspot.com/-zneY-ONkY30/WVAXrJ2qtMI/AAAAAAAACQU/0vkSZL4Fs2QwAHvjj9Sk9gBABGvzpdc0ACLcBGAs/s1600/706.jpg">
+    <h5 align="center">{{uploads}} track(s) uploaded | {{playlists}} playlist(s) followed </h5>
+    <p> </p>
+    <strong> Liked tracks: </strong>
+
+    {%for link in links%}
+    <div class= "song">
+        <div align="center" color=white>
+            <strong>{{link[2]}} uploaded the following song to </strong><a class = "link "href=/playlist_profile?id={{ link[3]}}><strong>{{ link[3]}}</a></strong>
+        </div>
+        <br>
+        <div align="center">
+            <iframe width="420" height="315"
+                src="https://www.youtube.com/embed/{{link[0]}}">
+            </iframe>
+        {% if link[1] %}
+            <div class = "comment">
+                <strong>Description:</strong>
+                <br>
+                {{ link[1]}}
+            </div>
+        {% endif %}
+    </div>
+    {% endfor %}
 {% endblock %}

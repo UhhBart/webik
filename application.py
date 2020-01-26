@@ -519,7 +519,31 @@ def profile():
     uploads = db.execute("SELECT link FROM tracks WHERE added_by = :added_by", added_by=user_id)
     playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=user_id)
 
-    return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists))
+    liked_tracks = db.execute("SELECT track_id FROM users_likedtracks WHERE user_id = :user_id", user_id=user_id)
+
+    links = []
+    for track in liked_tracks:
+        link_info = []
+        track_id = track["track_id"]
+        link = db.execute("SELECT link FROM tracks WHERE track_id = :track_id", track_id = track_id)
+        link = youtube_api(link[0]["link"])
+        link_info.append(link)
+        description = db.execute("SELECT link_desc FROM tracks WHERE track_id = :track_id", track_id = track_id)
+        link_info.append(description[0]["link_desc"])
+        uploader = db.execute("SELECT added_by FROM tracks WHERE track_id = :track_id", track_id = track_id)
+        user_id = uploader[0]["added_by"]
+        adder = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = user_id)
+        link_info.append(adder[0]["username"])
+        playlist_id = db.execute("SELECT playlist_id FROM tracks WHERE track_id = :track_id", track_id = track_id)
+        playlist_id = playlist_id[0]["playlist_id"]
+        playlist = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id = playlist_id)
+        link_info.append(playlist[0]["playlist_name"])
+
+        links.append(link_info)
+
+    print(links)
+
+    return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists), links=links)
 
 
 @app.route("/deletesong")
