@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import login_required, youtube_api, check_following, link_check, check_liked
+from helpers import login_required, youtube_api, check_following, link_check, check_liked, yttest
 
 # Configure application
 app = Flask(__name__)
@@ -242,7 +242,6 @@ def check_login_password():
 def timeline():
     """Show timeline with posts from playlists user is following"""
 
-    # retrieve playlists user is following from database
     playlists_ids = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id= :user_id", user_id=session["user_id"])
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
     playlists, data = [], []
@@ -256,30 +255,45 @@ def timeline():
     for playlist_id in playlists:
         rows = db.execute("SELECT playlist_id, added_by, link, time, link_desc, likes, track_id FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
 
-        #???
-        for link in rows:
-            data1 = []
-            data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
-            youtube = link["link"]
+        yttest(playlists, data, rows)
+    # retrieve playlists user is following from database
+    # playlists_ids = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id= :user_id", user_id=session["user_id"])
+    # name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
+    # playlists, data = [], []
 
-            # making lists with important data for timeline
-            data1.append(youtube_api(youtube))
-            data1.append(link["time"])
-            data1.append(db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
-            data1.append(link["link_desc"])
-            data1.append(db.execute("SELECT playlist_id FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
-            data1.append(link["likes"])
-            data1.append(link["track_id"])
+    # # select all playlist from user
+    # for playlist in playlists_ids:
+    #     playlists.append(playlist["playlist_id"])
+    #     print(playlists)
 
-            if check_liked(session["user_id"], link["track_id"]):
-                data1.append("liked")
+    # # retrieve proper information from playlists
+    # for playlist_id in playlists:
+    #     rows = db.execute("SELECT playlist_id, added_by, link, time, link_desc, likes, track_id FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
 
-            else:
-                data1.append("unliked")
-            data.append(data1)
+    #     #???
+    #     for link in rows:
+    #         data1 = []
+    #         data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
+    #         youtube = link["link"]
 
-    # most recent songs are at the top of timeline
-    data.sort(key=lambda x: x[2], reverse=True)
+    #         # making lists with important data for timeline
+    #         data1.append(youtube_api(youtube))
+    #         data1.append(link["time"])
+    #         data1.append(db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
+    #         data1.append(link["link_desc"])
+    #         data1.append(db.execute("SELECT playlist_id FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
+    #         data1.append(link["likes"])
+    #         data1.append(link["track_id"])
+
+    #         if check_liked(session["user_id"], link["track_id"]):
+    #             data1.append("liked")
+
+    #         else:
+    #             data1.append("unliked")
+    #         data.append(data1)
+
+    # # most recent songs are at the top of timeline
+    # data.sort(key=lambda x: x[2], reverse=True)
     return render_template("timeline.html", data=data, name=name)
 
 

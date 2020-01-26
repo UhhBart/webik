@@ -23,7 +23,7 @@ def youtube_api(link):
             return item
 
 
-    #https://www.youtube.com/watch?v=4fndeDfaWCg     <-- check deze banger
+
 
 def login_required(f):
     """
@@ -62,3 +62,30 @@ def check_liked(user_id, track_id):
     for i in check_liked:
         if i["user_id"] == user_id:
             return True
+
+
+def yttest(playlists,data,rows):
+
+    for link in rows:
+        data1 = []
+        data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
+        youtube = link["link"]
+
+        # making lists with important data for timeline
+        data1.append(youtube_api(youtube))
+        data1.append(link["time"])
+        data1.append(db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
+        data1.append(link["link_desc"])
+        data1.append(db.execute("SELECT playlist_id FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
+        data1.append(link["likes"])
+        data1.append(link["track_id"])
+
+        if check_liked(session["user_id"], link["track_id"]):
+            data1.append("liked")
+        else:
+            data1.append("unliked")
+        data.append(data1)
+
+        # most recent songs are at the top of timeline
+    data.sort(key=lambda x: x[2], reverse=True)
+    return data
