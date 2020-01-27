@@ -10,13 +10,17 @@
     <!--display playlist name and place upload button-->
     <div align="center">
         <p>
-            <h1 align="center"><u>{{ playlist_name }}</u>
+            <h1 align="center"><u>{{ playlist_name }}</u></h1>
+            <h3>
                 <a href=/upload>
                     <button id="upload-button" type="button">+ Upload</button>
                 </a>
-            </h1>
-            IDK OF DIT MOOI STAAT IK TEST T LATER NOG FF
-            <a href="/player?playlist_id={{id}}">
+                <a href="/player?playlist_id={{id}}">
+                    <button id="upload-button" type="button">&#9658; Start</button>
+                </a>
+            </h3>
+
+
         </p>
 
         <!--show if the user is creator of the playlist-->
@@ -47,9 +51,9 @@
     </div>
 
     <!--display playlist description, if there is any-->
-    {% if description[0]["description"] %}
+    {% if description %}
     <div class = "comment">
-        {{ description[0]["description"] }}
+        {{ description }}
     </div>
     {% endif %}
     <br>
@@ -97,7 +101,7 @@
         Uploaded at {{link[2]}}
 
         <!--if user is the uploader of the song, allow user to delete song-->
-        {% if link[0]==current_user %}
+        {% if link[0][0]["username"]==current_user %}
             | <a href="/deletesong?track_id={{link[4]}}"><button id="delete-song-button" type="button" onclick= "deleted()">Delete</button></a>
         {% endif %}
     </div>

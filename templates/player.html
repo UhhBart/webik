@@ -8,8 +8,18 @@
 
 {% block main %}
 <body>
+    {% if videos|length < 1 %}
+        <div align="center" class="comment">
+            <h1>
+                Looks like that playlist doesn't contain any songs.
+                <br>
+                <a class="link"href="/upload">Upload</a> some new songs to the playlist to use this feature.
+            </h1>
+        </div>
+    {% else %}
   <div align="center" id="player"></div>
   <script src="//www.youtube.com/iframe_api"></script>
+     {% endif %}
 </body>
 
 <script>
