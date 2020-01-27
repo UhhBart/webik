@@ -3,79 +3,104 @@
 <!DOCTYPE html>
 
 {% block title %}
-    playlist Profile
+    Playlist Profile
 {% endblock %}
 
 {% block main %}
+    <!--display playlist name and place upload button-->
+    <div align="center">
+        <p>
+            <h1 align="center"><u>{{ playlist_name }}</u>
+                <a href="/upload">
+                    <button id="upload-button" type="button">+ Upload</button>
+                </a>
+            </h1>
+        </p>
+
+        <!--show if the user is creator of the playlist-->
+        {% if creator_id == user_id %}
+            <p>
+                <h10>You are the creator of this playlist</h10>
+            </p>
+        {% endif %}
+        <br>
+
+        <!--show general statistics about playlist-->
+        <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) |
+
+        <!--allow user to delete playlist if they're the creator-->
+        {% if creator_id == user_id %}
+            <a href="/deleteplaylist?playlist_id={{id}}">
+                <button id= 'delete-playlist-button' class="btn btn-outline-danger" type="button" onclick= "deleted()">Delete Playlist</button>
+            </a></h5>
+
+        <!--if user is not creator, allow user to follow or unfollow-->
+        {% else %}
+            {% if button == "follow" %}
+                <a href="/follow?name={{id}}"><button id="unfollow-button" type="button">Following</button></a></h5>
+            {% else %}
+                <a href="/follow?name={{id}}"><button id="follow-button"  type="button">+ Follow!</button></a></h5>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <!--display playlist description, if there is any-->
+    {% if description[0]["description"] %}
+    <div class = "comment">
+        {{ description[0]["description"] }}
+    </div>
+    {% endif %}
+    <br>
+
+    {% for link in links %}
+    <div class="song">
         <div align="center">
-            <p><h1 align="center"><u>{{ playlist_name }}</u>  <a href="/upload"><button id="upload-button" type="button">+ Upload</button></a></h5></h1></p>
-
-            {% if creator_id == user_id%}
-                <p><h10>You are the creator of this playlist</h10></p>
-            {% endif %}
-            <br>
-
-            <h5 align="center">{{posts}} song(s) | {{followers}} follower(s) |
-
-            {% if creator_id == user_id%}
-                <a href="/deleteplaylist?playlist_id={{id}}"><button id= 'delete-playlist-button' class="btn btn-outline-danger" type="button" onclick= "deleted()">Delete Playlist</button></a>
-            {% else %}
-                {% if button == "follow" %}
-                    <a href="/follow?name={{id}}"><button id="unfollow-button" type="button"><span>Following</span></button></a></h5>
-                {% else %}
-                    <a href="/follow?name={{id}}"><button id="follow-button"  type="button">+ Follow!</button></a></h5>
-                {% endif %}
-            {% endif %}
-
+            <!--show which user uploaded the song-->
+            <a class="link" href="/profile?username={{link[0][0]['username']}}">
+                <strong>{{link[0][0]["username"]}}</strong></a> uploaded the following song:
         </div>
-            {% if description[0]["description"] %}
+        <br>
+        <div align="center">
+            <!--use YouTube API to embed video-->
+            <iframe width="420" height="315"
+                src="https://www.youtube.com/embed/{{link[1]}}">
+            </iframe>
+        </div>
+
+        <!--if post contained a comment, display-->
+        {% if link[3] %}
             <div class = "comment">
-                {{ description[0]["description"] }}
-            </div>
-            {% endif %}
+                {{ link[3] }}
 
+            </div>
+        {% endif %}
+
+        <!--display button to allow user to like or unlike a song-->
+        {% if link[6] != "liked" %}
+            <div>
+                {{link[5]}} Likes |
+                <a href="/upvote?track_id={{link[4]}}"><button id="like-button" type="button">+ Like</button></a>
+            </div>
+
+        {% else %}
+            <div>
+                {{link[5]}} Likes |
+                <a href="/upvote?track_id={{link[4]}}"><button id="unlike-button" type="button">- Unlike</button></a>
+            </div>
+
+        {% endif %}
         <br>
-        {% for link in links %}
-        <div class= "song">
-            <div align="center" color=white>
-                <a href="/profile?username={{link[0][0]['username']}}"><strong>{{link[0][0]["username"]}}</strong></a> uploaded the following song:
-            </div>
-            <br>
-            <div align="center">
-                <iframe width="420" height="315"
-                    src="https://www.youtube.com/embed/{{link[1]}}">
-                </iframe>
-            </div>
-            {% if link[3] %}
-                <div class = "comment">
-                    {{ link[3] }}
 
-                </div>
-            {% endif %}
+        <!--display when the song was uploaded-->
+        Uploaded at {{link[2]}}
 
-            {% if link[6] != "liked" %}
-                <div>
-                    {{link[5]}} Likes |
-                    <a href="/upvote?track_id={{link[4]}}"><button id="like-button" type="button">+ Like</button></a>
-                </div>
-            {% else %}
-                <div>
-                    {{link[5]}} Likes |
-                    <a href="/upvote?track_id={{link[4]}}"><button id="unlike-button" type="button">- Unlike</button></a>
-                </div>
-
-            {% endif %}
-            <br>
-
-
-                Uploaded at {{link[2]}}
-                {%if link[0]==current_user%}
-                    | <a href="/deletesong?track_id={{link[4]}}"><button id="delete-song-button" type="button" onclick= "deleted()">Delete</button></a>
-                {%endif%}
-            </div>
-
-        <br>
-        {% endfor %}
+        <!--if user is the uploader of the song, allow user to delete song-->
+        {% if link[0]==current_user %}
+            | <a href="/deletesong?track_id={{link[4]}}"><button id="delete-song-button" type="button" onclick= "deleted()">Delete</button></a>
+        {% endif %}
+    </div>
+    <br>
+    {% endfor %}
 
 <script>
     var follow = document.getElementById("follow-button")

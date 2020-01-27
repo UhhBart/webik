@@ -5,49 +5,65 @@
 {% block title %}
     Register
 {% endblock %}
-    <head>
 
-    </head>
 {% block main %}
     <body>
         <div>
-            <p><h3 align="center" color="#ff0000">Register for a brand new VibeCheck account here!</h3></p>
+            <p>
+                <h3 align="center" color="#ff0000">Register for a brand new VibeCheck account here!</h3>
+            </p>
         </div>
 
         <form action="/register" method="post" id="needs-validation" class="form" novalidate>
+
+            <!--ask user for their new username-->
             <div class="form-group">
                 <p align="left"><strong>Username</strong></p>
                 <input type="text" class="form-control" name="username" id="username" placeholder="Username" onkeyup= "checks()" required>
-                <div class="invalid-feedback" id="taken"> Provide a username </div>
-
+                <div class="invalid-feedback" id="taken">
+                    Provide a username
+                </div>
             </div>
             <br>
-            <div class="form-group">
-                <p align="left"><strong>Password</strong><br>(Must be at least 8 characters long)</p>
 
+            <!--ask user for their new password-->
+            <div class="form-group">
+                <p align="left">
+                    <strong>Password</strong>
+                    <br>
+                    (Must be at least 8 characters long)
+                </p>
                 <input class="form-control" name="password" id="password" placeholder="Password" type="password" required>
-                <div class="invalid-feedback" id="error"> Provide a password</div>
+                <div class="invalid-feedback" id="error">
+                    Provide a password
+                </div>
             </div>
-            </br>
             <br>
-            <div class="form-group">
-                <p align="left"><strong>Confirm password</strong></p>
 
+            <!--ask user to repeat their new password-->
+            <div class="form-group">
+                <p align="left">
+                    <strong>Confirm password</strong>
+                </p>
                 <input class="form-control" name="confirmation" id="confirmations" placeholder="Repeat password" type="password" required>
-                <div class="invalid-feedback" id="different"> Repeat password</div>
+                <div class="invalid-feedback" id="different">
+                    Repeat password
+                </div>
             </div>
-            </br>
+
+            <!--render submit button-->
             <div align="center">
-                <button class="btn btn-primary" type="submit" id="register">Register!</button>
+                <button class="d-block btn btn-outline-light" type="submit" id="register">Register!</button>
             </div>
+
+            <!--allow users to redirect themselves to log in page-->
             <div>
                Already have an account? <br><a href= "login">Log in here!</a>
             </div>
         </form>
-
     </body>
-<script>
 
+<script>
 
     let users_name = document.getElementById("username");
     let alert_user = document.getElementById("taken");

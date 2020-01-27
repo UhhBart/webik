@@ -34,30 +34,27 @@
             </button>
             <div class="collapse navbar-collapse" id="navbar">
 
-
+                <!--if user is logged in, show buttons to redirect-->
                 {% if session.user_id %}
                 <div class="collapse navbar-collapse">
                 <ul class="navbar-nav mr-auto mt-2">
                     <li class="nav-item"><a class="nav-link" href="/upload">Upload</a></li>
                     <li class="nav-item"><a class="nav-link" href="/create">Create</a></li>
                     <li class="nav-item"><a class="nav-link" href="/playlists">Playlists</a></li>
-
                 </ul>
                 </div>
 
-
-
                 <ul class="navbar-nav ml-auto mt-2">
-                    <input class="form-control ml-auto-2" type="search" placeholder="Search playlists" aria-label="Search">
                     <a href="#menu2" class="nav-link dropdown-toggle" data-toggle="dropdown" id="navbarDropdownMenuLink" aria-expanded="false" aria-haspopup="true">My account</a>
-
                     <ul class="dropdown-menu dropdown-menu-right">
-                          <li><a class="dropdown-item"href="/profile">Profile</a></li>
-                          <li><a class="dropdown-item"href="/change_password">Change password</a></li>
-                          <li class="dropdown-divider"></li>
-                          <li><a class="dropdown-item"href="/logout">Log out</a></li>
-                </ul>
+                        <!--show buttons to redirect user to account utilities-->
+                        <li><a class="dropdown-item"href="/profile">Profile</a></li>
+                        <li><a class="dropdown-item"href="/change_password">Change password</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a class="dropdown-item"href="/logout">Log out</a></li>
+                    </ul>
 
+                <!--if user is not logged in, show register / login buttons-->
                 {% else %}
                 <ul class="navbar-nav ml-auto mt-2">
                     <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
@@ -68,23 +65,15 @@
             </div>
         </nav>
 
-        {% if get_flashed_messages() %}
-            <header>
-                <div class="alert alert-primary border text-center" role="alert">
-                    {{ get_flashed_messages() | join(" ") }}
-                </div>
-            </header>
-        {% endif %}
-
         <main class="container p-5">
             {% block main %}{% endblock %}
         </main>
 
+        <!--redirect user to social media of site creators ;)-->
         <footer class="small text-center text-muted">
         Developed by <a href="https://www.instagram.com/uhhbart">Bart</a>, <a href="https://instagram.com/martijnschuurhuiss">Martijn</a>,
                      <a href="https://instagram.com/naomi.roodx">Naomi</a> and <a href="https://instagram.com/tun62">Toon</a>
 
         </footer>
     </body>
-
 </html>

@@ -5,56 +5,86 @@
 {% block title %}
     Timeline
 {% endblock %}
-    <head>
 
-    </head>
 {% block main %}
-        <h1 align = "center">Welcome home, {{ name[0]["username"]}}!</h1>
-        <br>
+    <body>
+        <!--display welcome message-->
+        <p>
+            <h1 align = "center">Welcome home, {{ name[0]["username"]}}!</h1>
+        </p>
 
         {% if not data %}
+            <!--if there are no songs uploaded to any followed playlists, allow user to redirect to upload or create form-->
             <div class = "form">
-                <strong>Whoops! Looks like there aren't any songs to display here yet!
-                <br><br>
-                Add a new song to one of your followed playlists <a href = /upload>here!</strong>
+                <strong>
+                    Whoops! Looks like there aren't any songs to display here yet!
+                    <br>
+                    <br>
+                    Add a new song to one of your followed playlists <a href = /upload>here!</a>
+                    <br>
+                    If you're not following any playlists yet, create a new one <a href = /create>here!</a>
+                </strong>
             </div>
         {% endif %}
+
         {% for link in data %}
         <div class= "song">
             <div align="center" color=white>
-                <strong><a class="link" href="/profile?username={{link[0][0]['username']}}">{{link[0][0]["username"]}}</strong></a> uploaded the following song to <a class = "link "href=/playlist_profile?id={{ link[5][0]["playlist_id"]}}><strong>{{ link[3][0]["playlist_name"] }}:</a></strong>
+                <!--show which user uploaded the song-->
+                <strong>
+                    <a class="link" href="/profile?username={{link[0][0]['username']}}">
+                        {{link[0][0]["username"]}}
+                    </a>
+                </strong>
+
+                uploaded the following song to
+                <!--show to which playlist the song was uploaded-->
+                <a class = "link "href=/playlist_profile?id={{ link[5][0]["playlist_id"]}}>
+                    <strong>
+                        {{ link[3][0]["playlist_name"] }}:
+                    </strong>
+                </a>
             </div>
             <br>
             <div align="center">
+                <!--use YouTube API to play song-->
                 <iframe width="420" height="315"
                     src="https://www.youtube.com/embed/{{link[1]}}">
                 </iframe>
 
-            {% if link[4] %}
-                <div class = "comment">
-                    <strong>Description:</strong>
-                    <br>
-                    {{ link[4] }}
-                </div>
-            {% endif %}
+                {% if link[4] %}
+                    <!--if song has a description, show-->
+                    <div class = "comment">
+                        <strong>Description:</strong>
+                        <br>
+                        {{ link[4] }}
+                    </div>
+                {% endif %}
 
+                <!--display like / unlike buttons depending on whether song was already liked or not-->
+                {% if link[8] != "liked" %}
+                    <div>
+                        {{link[6]}} Likes |
+                        <a href="/upvote?track_id={{link[7]}}">
+                            <button id="like-button" type="button">+ Like</button>
+                        </a>
+                    </div>
 
-            {% if link[8] != "liked" %}
-                <div>
+                {% else %}
+                    <div>
                     {{link[6]}} Likes |
-                    <a href="/upvote?track_id={{link[7]}}"><button id="like-button" type="button">+ Like</button></a>
-                </div>
-            {% else %}
-                <div>
-                {{link[6]}} Likes |
-                <a href="/upvote?track_id={{link[7]}}"><button id="unlike-button" type="button">Liked</button></a>
-                </div>
-            {% endif %}
+                    <a href="/upvote?track_id={{link[7]}}">
+                        <button id="unlike-button" type="button">Liked</button>
+                    </a>
+                    </div>
+                {% endif %}
+
                 <br>
             </div>
+            <!--show when the song was uploaded-->
             Uploaded at {{link[2]}}
-            </div>
+        </div>
         <br>
         {% endfor %}
-
+    </body>
 {% endblock %}

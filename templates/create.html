@@ -9,19 +9,31 @@
 {% block main %}
     <body>
         <div>
-            <p><h1 align="center" color=black>Create a new Playlist!</h1></p>
+            <p>
+                <h1 align="center" color=black>Create a new Playlist!</h1>
+            </p>
         </div>
         <form class="form" action= "/create" method="POST" name="create" id="needs-validation">
-            <div>
-                <p align="left"><strong>Name playlist</strong></p>
 
+            <!--ask user to put in playlist name-->
+            <div>
+                <p align="left">
+                    <strong>Name playlist</strong>
+                </p>
                 <input class="form-control" id="playlist" name="playlist" type="text" autocomplete="off" placeholder="Enter a playlist name" onkeyup= "checking()" required>
-                <div class="invalid-feedback" id="took"> Provide a username </div>
+                <div class="invalid-feedback" id="took">
+                    Provide a username
+                </div>
             </div>
             <br>
+
+            <!--allow user to put in a playlist description-->
             <div>
-                <p align="left"><strong>Playlist description</strong><br>
-                (optional)</p>
+                <p align="left">
+                    <strong>Playlist description</strong>
+                <br>
+                (optional)
+                </p>
                 <input class="form-control" id="description" name="description" type="text" autocomplete="off" placeholder="Enter a playlist description">
             </div>
             <br>
@@ -29,7 +41,6 @@
                 <input class="d-block btn btn-outline-light" type="submit" value="Create!" id="create">
             </div>
         </form>
-
     </body>
 
 <script>

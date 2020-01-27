@@ -5,33 +5,43 @@
 {% block title %}
     Login
 {% endblock %}
-    <head>
 
-    </head>
 {% block main %}
     <body>
         <div>
-            <p><h3 align="center" color="#ff0000">You can log in here.</h3></p>
+            <p>
+                <h3 align="center" color="#ff0000">You can log in here.</h3>
+            </p>
         </div>
-        <form action= "/login" method="POST" name="register" class="form" id="needs-validation"  navalidate>
+
+        <form action= "/login" method="POST" name="register" class="form" id="needs-validation">
+            <!--ask user for their username-->
             <div>
                 <input class="form-control" id="username" name="username" type="text" autocomplete="off" placeholder="Enter your username" onkeyup = "checks()" autofocus required>
-                <div class="invalid-feedback" id="taken"> Provide a username </div>
-
-
+                <div class="invalid-feedback" id="taken">
+                    Provide a username
+                </div>
             </div>
             <br>
+            <!--ask user for their password-->
             <div>
                 <input class="form-control" id="password" name="password" type="password" autocomplete="off" placeholder="Enter your password" onkeyup= "checking()" required>
-                <div class="invalid-feedback" id="error"> Provide a password </div>
+                <div class="invalid-feedback" id="error">
+                    Provide a password
+                </div>
             </div>
             <br>
+            <!--log user in-->
             <div align="center">
                 <input class="d-block btn btn-outline-light" type="submit" value="Log in!">
             </div>
             <br>
+            <!--redirect user to register page-->
             <div>
-                Don't already have an account? <a href= "register">Register here!</a>
+                Don't already have an account?
+                <a href= "register">
+                    Register here!
+                </a>
             </div>
         </form>
 
@@ -39,14 +49,14 @@
 
     let users_name = document.getElementById("username");
     let alert_user = document.getElementById("taken");
-    let passwords = document.getElementById("password")
+    let passwords = document.getElementById("password");
     let error = document.getElementById("error");
 
 
     function  checks() {
         $.get("/check_login_username?username="+ users_name.value, function (checked){
             if (checked == false) {
-                alert_user.innerHTML = "Password or username is incorrect"
+                alert_user.innerHTML = "Password or username is incorrect";
                 users_name.setAttribute("class", "form-control is-invalid");
             }
             else {
@@ -58,7 +68,7 @@
     function  checking() {
         $.get("/check_login_password?password="+ passwords.value + "&username=" + users_name.value, function (chec){
             if (chec == false) {
-                error.innerHTML = "Username and do not match password"
+                error.innerHTML = "Username and do not match password";
                 passwords.setAttribute("class", "form-control is-invalid");
             }
             else {

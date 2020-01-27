@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+
 <!DOCTYPE html>
 
 {% block title %}
@@ -7,41 +8,49 @@
 
 {% block main %}
     <body>
-        <div>
-            <p><h1 align="center" color=black>Upload your own song!</h1></p>
-        </div>
-        <form class="form" action= "/upload" method="POST" name="upload" >
-        <div>
-            <p align="left"><strong>Select playlist</strong></p>
-            <select class = form-control name = "playlist">
-                <option disabled selected value>playlist</option>
-                {% for playlist in playlists%}
-                <option>{{playlist[0]["playlist_name"]}}</option>
-                {% endfor %}
-            </select>
-        <br>
-        </div>
+        <p>
+            <h1 align="center" color=black>Upload your own song!</h1>
+        </p>
+        <form class="form" action="/upload" method="POST" name="upload">
             <div>
-                <p align="left"><strong>Link to your song</strong></p>
+                <!--allow user to specifiy to which playlist they'd like to upload-->
+                <p align="left">
+                    <strong>Select playlist</strong>
+                </p>
+                <select class = form-control name = "playlist">
+                    <option disabled selected value>-- Select playlist --</option>
+
+                    <!--render all followed playlists to choose from-->
+                    {% for playlist in playlists %}
+                        <option>
+                            {{ playlist[0]["playlist_name"] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            <br>
+            </div>
+            <div>
+                <!--allow user to put in link to YouTube song-->
+                <p align="left">
+                    <strong>Link to your song</strong>
+                </p>
                 <input class="form-control" id="link" name="link" type="text" autocomplete="off" placeholder="Enter a youtube link" required>
             </div>
-
             <br>
-
             <div>
-                <p align="left"><strong>Song description</strong><br>
-                (optional)</p>
+                <!--allow user to type a description if they wish to do so-->
+                <p align="left">
+                    <strong>Song description</strong>
+                <br>
+                (optional)
+                </p>
                 <input class="form-control" id="link_desc" name="link_desc" type="text" autocomplete="off" placeholder="Enter a song description">
             </div>
-
             <br>
-
+            <!--render upload button-->
             <div align="center">
                 <input class="d-block btn btn-outline-light" type="submit" value="Upload!">
             </div>
         </form>
-
     </body>
-
-
 {% endblock %}

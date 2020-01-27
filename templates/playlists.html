@@ -5,27 +5,37 @@
 {% block title %}
     Playlists
 {% endblock %}
-    <head>
 
-    </head>
 {% block main %}
     <div>
-        <p><h1 align="center" color=black>Followed playlists</h1></p>
+        <p>
+            <h1 align="center">Followed playlists</h1>
+        </p>
     </div>
+
+    <!--if user is not following playlists, redirect them to search page-->
     {% if not ids %}
         <div class = "form">
-            <strong>Hmmm... Looks like you're not following any playlists yet!
-            <br><br>
-            Find new playlists you might like <a href = "https://www.youtube.com/watch?v=QKfkMqqNwWg">here!</strong>
+            <strong>
+                Hmmm... Looks like you're not following any playlists yet!
+                <br><br>
+                Find new playlists you might like <a href="/search">here!</a>
+            </strong>
         </div>
     {% else %}
         <div align="center" class="form">
-        <ul>
-    {% for id in ids %}
-        <h5 align="left"><li><a href="/playlist_profile?id={{id[1]['playlist_id']}}">{{ id[0] }}</a></li></h5>
-    {% endfor %}
 
+        <!--create an unordened list containing all followed playlists-->
+        <ul>
+        {% for id in ids %}
+            <h5 align="left">
+                <li>
+                    <a href="/playlist_profile?id={{id[1]['playlist_id']}}">{{ id[0] }}</a>
+                </li>
+            </h5>
+        {% endfor %}
         </ul>
+
         </div>
     {% endif %}
 {% endblock %}
