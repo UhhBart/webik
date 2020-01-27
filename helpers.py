@@ -72,11 +72,13 @@ def timeline_info(playlists_ids):
         playlists.append(playlist["playlist_id"])
 
     # retrieve proper information from playlists
+    all_tracks = []
     for playlist_id in playlists:
-        all_tracks = db.execute("SELECT * FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
+        tracks = db.execute("SELECT * FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
+        for track in tracks:
+            all_tracks.append(track)
 
     data = []
-
 
     for track in all_tracks:
         # making lists with important data for timeline
