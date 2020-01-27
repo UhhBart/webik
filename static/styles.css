@@ -251,3 +251,13 @@ border-radius: 15px 50px 30px;
   left: 50px;
   cursor: hand;
 }
+
+#player {
+    width: 680px; /* you have to have a size or this method doesn't work */
+    height: 550px; /* think about making these max-width instead - might give you some more responsiveness */
+
+    position: absolute; /* positions out of the flow, but according to the nearest parent */
+    top: 0; right: 0; /* confuse it i guess */
+    bottom: 0; left: 0;
+    margin: auto; /* make em equal */
+}

@@ -156,3 +156,14 @@ def userprofile(user_id):
     links.sort(key=lambda x: x[4], reverse=True)
 
     return links
+
+def player_info(playlist_id):
+
+    uploads = db.execute("SELECT link FROM tracks WHERE playlist_id = :playlist_id", playlist_id = playlist_id)
+    nani = []
+    for upload in uploads:
+        print(upload["link"])
+        nani.append(youtube_api(upload["link"]))
+
+    return nani
+

@@ -1,13 +1,13 @@
 import os
 
 from cs50 import SQL
-from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for, json
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile
+from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info
 
 # Configure application
 app = Flask(__name__)
@@ -496,7 +496,15 @@ def upvote():
         db.execute("INSERT INTO users_likedtracks (track_id, user_id) VALUES (:track_id, :user_id)", track_id=track_id, user_id=user_id)
         db.execute("UPDATE tracks SET likes = likes + 1 WHERE track_id = :track_id", track_id=track_id)
         return jsonify("liked")
-    return render_template("apology.html", messafe = "u broke our site")
+    return render_template("apology.html", messafe = "ERROR: looks like you somehow managed to break our site")
+
+@app.route("/player", methods=["GET"])
+def player():
+
+    playlist_id = request.args.get("playlist_id")
+    videos = (player_info(playlist_id))
+
+    return render_template("player.html", videos = videos)
 
 # # copied from finance
 # def errorhandler(e):

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+<!DOCTYPE html>
+
+{% block title %}
+    Playlist
+{% endblock %}
+
+{% block main %}
+<body>
+  <div align="center" id="player"></div>
+  <script src="//www.youtube.com/iframe_api"></script>
+</body>
+
+<script>
+    var receive = ('{{ videos | tojson }}');
+    var videoIDs = JSON.parse(receive);
+    var player, currentVideoId = 0;
+
+//  source: https://developers.google.com/youtube/iframe_api_reference#Functions
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '550',
+            width: '680',
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        event.target.loadVideoById(videoIDs[currentVideoId]);
+    }
+
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.ENDED) {
+            currentVideoId++;
+            if (currentVideoId < videoIDs.length) {
+                player.loadVideoById(videoIDs[currentVideoId]);
+            }
+        }
+    }
+</script>
+{% endblock %}
