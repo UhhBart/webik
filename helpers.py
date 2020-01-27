@@ -64,52 +64,67 @@ def check_liked(user_id, track_id):
             return True
 
 
-def yttest(playlists,data,rows):
+def timeline_info(playlists_ids):
+    playlists = []
 
-    for link in rows:
-        data1 = []
-        data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
-        youtube = link["link"]
+    # select all playlists from user
+    for playlist in playlists_ids:
+        playlists.append(playlist["playlist_id"])
 
+    # retrieve proper information from playlists
+    for playlist_id in playlists:
+        all_tracks = db.execute("SELECT * FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
+
+    data = []
+
+
+    for track in all_tracks:
         # making lists with important data for timeline
-        data1.append(youtube_api(youtube))
-        data1.append(link["time"])
-        data1.append(db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
-        data1.append(link["link_desc"])
-        data1.append(db.execute("SELECT playlist_id FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
-        data1.append(link["likes"])
-        data1.append(link["track_id"])
+        track_info = []
+        track_info.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=track["added_by"]))
+        track_info.append(youtube_api(track["link"]))
+        track_info.append(track["time"])
+        track_info.append(db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=track["playlist_id"]))
+        track_info.append(track["link_desc"])
+        track_info.append(db.execute("SELECT playlist_id FROM playlists WHERE playlist_id = :playlist_id", playlist_id=track["playlist_id"]))
+        track_info.append(track["likes"])
+        track_info.append(track["track_id"])
 
-        if check_liked(session["user_id"], link["track_id"]):
-            data1.append("liked")
+        # information for the liked/unliked button
+        if check_liked(session["user_id"], track["track_id"]):
+            track_info.append("liked")
         else:
-            data1.append("unliked")
-        data.append(data1)
+            track_info.append("unliked")
 
-        # most recent songs are at the top of timeline
+        # insert all the information from 1 track to data
+        data.append(track_info)
+
+    # most recent songs are at the top of timeline
     data.sort(key=lambda x: x[2], reverse=True)
     return data
 
 
-def yt_playlist_profile(rows, user_id):
+def yt_playlist_profile(all_tracks, user_id):
 
     links = []
-    for link in rows:
-        data1 = []
+    for track in all_tracks:
+        # making lists with important data for playlist profile
+        track_info = []
+        track_info.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=track["added_by"]))
+        track_info.append(youtube_api(track["link"]))
+        track_info.append(track["time"])
+        track_info.append(track["link_desc"])
+        track_info.append(track["track_id"])
+        track_info.append(track["likes"])
 
-        data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
-        youtube = link["link"]
-        # ???
-        data1.append(youtube_api(youtube))
-        data1.append(link["time"])
-        data1.append(link["link_desc"])
-        data1.append(link["track_id"])
-        data1.append(link["likes"])
-        if check_liked(user_id, link["track_id"]):
-           data1.append("liked")
+        # information for the liked/unliked button
+        if check_liked(user_id, track["track_id"]):
+           track_info.append("liked")
         else:
-            data1.append("unliked")
-        links.append(data1)
+            track_info.append("unliked")
+
+        # insert all the information from 1 track to data
+        links.append(track_info)
 
     # most recent songs are at the top of playlist_profile
     links.sort(key=lambda x: x[2], reverse=True)
@@ -124,21 +139,17 @@ def userprofile(user_id):
     for track in liked_tracks:
         link_info = []
         track_id = track["track_id"]
-        link = db.execute("SELECT link FROM tracks WHERE track_id = :track_id", track_id = track_id)
-        link = youtube_api(link[0]["link"])
+        info = db.execute("SELECT link, link_desc, added_by, playlist_id, time FROM tracks WHERE track_id = :track_id", track_id = track_id)
+        link = youtube_api(info[0]["link"])
         link_info.append(link)
-        description = db.execute("SELECT link_desc FROM tracks WHERE track_id = :track_id", track_id = track_id)
-        link_info.append(description[0]["link_desc"])
-        uploader = db.execute("SELECT added_by FROM tracks WHERE track_id = :track_id", track_id = track_id)
-        user_id = uploader[0]["added_by"]
+        link_info.append(info[0]["link_desc"])
+        user_id = info[0]["added_by"]
         adder = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = user_id)
         link_info.append(adder[0]["username"])
-        playlist_id = db.execute("SELECT playlist_id FROM tracks WHERE track_id = :track_id", track_id = track_id)
-        playlist_id = playlist_id[0]["playlist_id"]
+        playlist_id = info[0]["playlist_id"]
         playlist = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id = playlist_id)
         link_info.append(playlist[0]["playlist_name"])
-        time = db.execute("SELECT time FROM tracks WHERE track_id = :track_id", track_id = track_id)
-        link_info.append(time[0]["time"])
+        link_info.append(info[0]["time"])
 
         links.append(link_info)
 

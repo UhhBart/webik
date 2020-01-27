@@ -10,6 +10,7 @@
     <div align="center">
         <h1>{{ name[0]["username"] }}</h1>
 
+<<<<<<< Updated upstream
         <!--display general statistics about users-->
         <h5 align="center">{{ uploads }} track(s) uploaded | {{ playlists }} playlist(s) followed </h5>
         <br>
@@ -18,6 +19,11 @@
         </div>
         <br>
     </div>
+=======
+    <h5 align="center">{{uploads}} track(s) uploaded | {{playlists}} playlist(s) followed </h5>
+    <p> </p>
+    <h3><strong> Liked tracks: </strong></h3>
+>>>>>>> Stashed changes
 
     <!--display all of the user's liked songs-->
     {%for link in links%}
@@ -39,7 +45,10 @@
                 {{ link[1]}}
             </div>
         {% endif %}
+        </div>
+        Uploaded at {{link[4]}}
     </div>
+    <br>
     {% endfor %}
 
 {% endblock %}

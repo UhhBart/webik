@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import login_required, youtube_api, check_following, link_check, check_liked, yttest, yt_playlist_profile
+from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile
 
 # Configure application
 app = Flask(__name__)
@@ -248,60 +248,15 @@ def check_login_password():
 def timeline():
     """Show timeline with posts from playlists user is following"""
 
+    # select all playlists the current user follows
     playlists_ids = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id= :user_id", user_id=session["user_id"])
+
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
-    playlists, data = [], []
 
-    # select all playlist from user
-    for playlist in playlists_ids:
-        playlists.append(playlist["playlist_id"])
-        print(playlists)
+    # get all the information for timeline
+    data = timeline_info(playlists_ids)
 
-    # retrieve proper information from playlists
-    for playlist_id in playlists:
-        rows = db.execute("SELECT * FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
-
-        yttest(playlists, data, rows)
-    # retrieve playlists user is following from database
-    # playlists_ids = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id= :user_id", user_id=session["user_id"])
-    # name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=session["user_id"])
-    # playlists, data = [], []
-
-    # # select all playlist from user
-    # for playlist in playlists_ids:
-    #     playlists.append(playlist["playlist_id"])
-    #     print(playlists)
-
-    # # retrieve proper information from playlists
-    # for playlist_id in playlists:
-    #     rows = db.execute("SELECT playlist_id, added_by, link, time, link_desc, likes, track_id FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
-
-    #     #???
-    #     for link in rows:
-    #         data1 = []
-    #         data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
-    #         youtube = link["link"]
-
-    #         # making lists with important data for timeline
-    #         data1.append(youtube_api(youtube))
-    #         data1.append(link["time"])
-    #         data1.append(db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
-    #         data1.append(link["link_desc"])
-    #         data1.append(db.execute("SELECT playlist_id FROM playlists WHERE playlist_id = :playlist_id", playlist_id=link["playlist_id"]))
-    #         data1.append(link["likes"])
-    #         data1.append(link["track_id"])
-
-    #         if check_liked(session["user_id"], link["track_id"]):
-    #             data1.append("liked")
-
-    #         else:
-    #             data1.append("unliked")
-    #         data.append(data1)
-
-    # # most recent songs are at the top of timeline
-    # data.sort(key=lambda x: x[2], reverse=True)
     return render_template("timeline.html", data=data, name=name)
-
 
 @app.route("/search", methods=["GET"])
 def search():
@@ -361,61 +316,33 @@ def create():
 def playlist_profile():
     """Show playlist with all uploaded songs"""
 
-    current_user = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = session["user_id"])
-
     # getting the info for the playlist_profile
-
-    # aangeleverd
-    playlist_id = request.args.get("id")
     user_id = session["user_id"]
+    current_user = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = user_id)
 
-    # select proper information from database
-    description = db.execute("SELECT description FROM playlists WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
-    creator_id = db.execute("SELECT creator_id FROM playlists WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
-    playlist_name = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=playlist_id)
+    # get playlist_id
+    playlist_id = request.args.get("id")
 
-    for playlist in playlist_name:
-        playlist_name = playlist["playlist_name"]
-    for id in creator_id:
-        creator_id = id["creator_id"]
-
+    # select proper information from database about playlist
+    playlist_info = db.execute("SELECT description, creator_id, playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=playlist_id)
+    description = playlist_info[0]["description"]
+    creator_id = playlist_info[0]["creator_id"]
+    playlist_name = playlist_info[0]["playlist_name"]
 
     # select proper information from database
     followers = db.execute("SELECT user_id FROM playlist_users WHERE playlist_id = :playlist_id", playlist_id=playlist_id)
-    rows = db.execute("SELECT added_by, link, time, link_desc, track_id, likes FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
+    all_tracks = db.execute("SELECT added_by, link, time, link_desc, track_id, likes FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
 
+    links = yt_playlist_profile(all_tracks, user_id)
 
-    yt_playlist_profile(rows, user_id)
-    #???
-    # links = []
-    # for link in rows:
-    #     data1 = []
-
-    #     data1.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=link["added_by"]))
-    #     youtube = link["link"]
-    #     # ???
-    #     data1.append(youtube_api(youtube))
-    #     data1.append(link["time"])
-    #     data1.append(link["link_desc"])
-    #     data1.append(link["track_id"])
-    #     data1.append(link["likes"])
-    #     if check_liked(user_id, link["track_id"]):
-    #       data1.append("liked")
-    #     else:
-    #         data1.append("unliked")
-    #     links.append(data1)
-    #     print(links)
-    # # most recent songs are at the top of playlist_profile
-    # links.sort(key=lambda x: x[2], reverse=True)
-
+    # gives current information about button
     if check_following(playlist_id, user_id):
         button = "follow"
     else:
         button = "unfollow"
 
     return render_template("playlist_profile.html", id= playlist_id, links=links, description=description, playlist_name=playlist_name,
-                                posts=len(rows), followers=len(followers), current_user=current_user, button=button, user_id=user_id, creator_id=creator_id)
-
+                                posts=len(all_tracks), followers=len(followers), current_user=current_user, button=button, user_id=user_id, creator_id=creator_id)
 
 @app.route("/upload", methods=["GET", "POST"])
 @login_required
@@ -519,33 +446,7 @@ def profile():
     uploads = db.execute("SELECT link FROM tracks WHERE added_by = :added_by", added_by=user_id)
     playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=user_id)
 
-    # links = userprofile(user_id)
-
-    liked_tracks = db.execute("SELECT track_id FROM users_likedtracks WHERE user_id = :user_id", user_id=user_id)
-
-    links = []
-    for track in liked_tracks:
-        link_info = []
-        track_id = track["track_id"]
-        link = db.execute("SELECT link FROM tracks WHERE track_id = :track_id", track_id = track_id)
-        link = youtube_api(link[0]["link"])
-        link_info.append(link)
-        description = db.execute("SELECT link_desc FROM tracks WHERE track_id = :track_id", track_id = track_id)
-        link_info.append(description[0]["link_desc"])
-        uploader = db.execute("SELECT added_by FROM tracks WHERE track_id = :track_id", track_id = track_id)
-        user_id = uploader[0]["added_by"]
-        adder = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = user_id)
-        link_info.append(adder[0]["username"])
-        playlist_id = db.execute("SELECT playlist_id FROM tracks WHERE track_id = :track_id", track_id = track_id)
-        playlist_id = playlist_id[0]["playlist_id"]
-        playlist = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id = playlist_id)
-        link_info.append(playlist[0]["playlist_name"])
-        time = db.execute("SELECT time FROM tracks WHERE track_id = :track_id", track_id = track_id)
-        link_info.append(time[0]["time"])
-
-        links.append(link_info)
-
-    links.sort(key=lambda x: x[4], reverse=True)
+    links = userprofile(user_id)
 
     return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists), links=links)
 
