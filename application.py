@@ -447,7 +447,7 @@ def profile():
     playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=user_id)
 
     links = userprofile(user_id)
-
+    print(links)
     return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists), links=links)
 
 

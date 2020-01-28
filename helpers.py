@@ -152,6 +152,7 @@ def userprofile(user_id):
         playlist = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id = playlist_id)
         link_info.append(playlist[0]["playlist_name"])
         link_info.append(info[0]["time"])
+        link_info.append(playlist_id)
 
         links.append(link_info)
 
