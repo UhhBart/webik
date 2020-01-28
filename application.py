@@ -61,10 +61,10 @@ def register():
         elif not password == confirm_password:
             return render_template("apology.html", message="Your passwords don't match, please try again")
 
-        existing_users = db.execute("SELECT username FROM users")
-        for username in existing_users:
-            if username == existing_users  ["username"]:
-                return render_template("apology.html", message="that username is already taken")
+        # existing_users = db.execute("SELECT username FROM users")
+        # for username in existing_users:
+        #     if username == existing_users  ["username"]:
+        #         return render_template("apology.html", message="that username is already taken")
 
         # add the new user's account to the databse
         db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
@@ -272,10 +272,6 @@ def create():
     """Allow user to create new playlists"""
     if request.method == "POST":
 
-        playlists = db.execute("SELECT playlist_name FROM playlists")
-        for playlist in playlists:
-            print(playlist
-            )
         # put new playlist information into database
         db.execute("INSERT INTO playlists (playlist_name, description, creator_id) VALUES(:playlist_name, :description, :creator_id)",
                    playlist_name=request.form.get("playlist"),
@@ -353,7 +349,7 @@ def add_number():
 
         # retrieve proper information
         playlist = request.form.get("playlist")
-        print(playlist)
+
         if not playlist:
             return render_template("apology.html", message = "you did not correctly specifiy to which playlist you'd like to upload.")
 
@@ -386,17 +382,17 @@ def results():
 def follow():
     """Allow users to follow playlists"""
 
-    playlist_id = request.args.get("name")
+    playlist_id = request.args.get("playlist_id")
     user_id = session["user_id"]
 
     if check_following(playlist_id, user_id):
         db.execute("DELETE FROM playlist_users WHERE playlist_id = :playlist_id AND user_id = :user_id", playlist_id=playlist_id, user_id=session["user_id"])
-        return redirect ("/playlist_profile?id=", playlist_id)
+        return jsonify(False)
 
     else:
         db.execute("INSERT INTO playlist_users (user_id, playlist_id) VALUES(:user_id, :playlist_id)",
                    user_id=session["user_id"], playlist_id=playlist_id)
-        return redirect ("/playlist_profile?id=", playlist_id)
+        return jsonify(True)
 
     return render_template("apology.html")
 
@@ -416,7 +412,6 @@ def playlists():
         test.append(playlist_name[0]["playlist_name"])
         test.append(playlist_id)
         ids.append(test)
-    print(ids)
 
     return render_template("playlists.html", ids=ids, playlist_id=playlist_id)
 
@@ -436,7 +431,7 @@ def profile():
     playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=user_id)
 
     links = userprofile(user_id)
-    print(links)
+
     return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists), links=links)
 
 
@@ -450,6 +445,7 @@ def deletesong():
 
     if int(user_id) == int(uploader[0]["added_by"]):
         db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
+        db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id", track_id = track_id)
         return jsonify("deleted")
 
     else:
@@ -480,12 +476,12 @@ def upvote():
     if check_liked(user_id, track_id):
         db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id AND user_id= :user_id", track_id=track_id, user_id=user_id)
         db.execute("UPDATE tracks SET likes = likes - 1 WHERE track_id = :track_id", track_id=track_id)
-        return jsonify("disliked")
+        return jsonify(False)
     else:
         db.execute("INSERT INTO users_likedtracks (track_id, user_id) VALUES (:track_id, :user_id)", track_id=track_id, user_id=user_id)
         db.execute("UPDATE tracks SET likes = likes + 1 WHERE track_id = :track_id", track_id=track_id)
-        return jsonify("liked")
-    return render_template("apology.html", messafe = "ERROR: looks like you somehow managed to break our site")
+        return jsonify(True)
+
 
 @app.route("/player", methods=["GET"])
 def player():
