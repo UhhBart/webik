@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+<!DOCTYPE html>
+
+{% block title %}
+    Playlists
+{% endblock %}
+
+{% block main %}
+    <div>
+        <p>
+            <h1 align="center">Found playlists</h1>
+        </p>
+    </div>
+
+    <!--if user is not following playlists, redirect them to search page-->
+    {% if not ids %}
+        <div class = "form">
+            <strong>
+                Sorry, we couldn't find any playlists that match that name!
+            </strong>
+        </div>
+    {% else %}
+        <div align="center" class="form">
+
+        <!--create an unordened list containing all followed playlists-->
+        <ul>
+        {% for id in ids %}
+            <h5 align="left">
+                <li>
+                    <a href="/playlist_profile?id={{id[1]['playlist_id']}}">{{ id[0] }}</a>
+                </li>
+            </h5>
+        {% endfor %}
+        </ul>
+
+        </div>
+    {% endif %}
+{% endblock %}
