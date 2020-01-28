@@ -258,24 +258,13 @@ def timeline():
 
     return render_template("timeline.html", data=data, name=name)
 
-@app.route("/search", methods=["GET"])
+@app.route("/search", methods=["GET", "POST"])
 def search():
+    if request.method == "GET":
+        return render_template("search.html")
 
-    new = []
-    # searchInput = request.args.get("search")
-    # print(searchInput, request.args.get("search"))
-    playlists = db.execute("SELECT playlist_name FROM playlists")
-    print(playlists, (request.args.get("q")))
-
-    # return render_template("/general_homepage.html", playlists=playlists)
-    for playlist in playlists:
-        playlist["playlist_name"] = playlist["playlist_name"].lower()
-        print(playlist["playlist_name"].startswith(request.args.get("q")))
-
-        if playlist["playlist_name"].startswith(request.args.get('q')):
-            new.append(playlist["playlist_name"])
-
-    return new
+    elif request.method == "POST":
+        return render_template("results.html")
 
 @app.route("/create", methods=["GET", "POST"])
 @login_required
