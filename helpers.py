@@ -2,8 +2,6 @@ import requests
 import urllib.parse
 import os
 from cs50 import SQL
-
-
 from flask import redirect, render_template, request, session
 from functools import wraps
 db = SQL("sqlite:///project.db")
@@ -23,8 +21,6 @@ def youtube_api(link):
             return item
 
 
-
-
 def login_required(f):
     """
     Decorate routes to require login.
@@ -38,6 +34,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 def check_following(playlist_id, user_id):
     """Functions that checks if playlist is followed by user"""
 
@@ -47,6 +44,7 @@ def check_following(playlist_id, user_id):
         if i["user_id"] == user_id:
             return True
 
+
 def link_check(link):
     if "youtube.com/watch?v=" in link:
         return 1
@@ -54,6 +52,7 @@ def link_check(link):
         return 2
     else:
         return False
+
 
 def check_liked(user_id, track_id):
 
@@ -133,6 +132,7 @@ def yt_playlist_profile(all_tracks, user_id):
 
     return links
 
+
 def userprofile(user_id):
 
     liked_tracks = db.execute("SELECT track_id FROM users_likedtracks WHERE user_id = :user_id", user_id=user_id)
@@ -159,6 +159,7 @@ def userprofile(user_id):
     links.sort(key=lambda x: x[4], reverse=True)
 
     return links
+
 
 def player_info(playlist_id):
 
