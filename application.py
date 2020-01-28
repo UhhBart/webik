@@ -61,10 +61,10 @@ def register():
         elif not password == confirm_password:
             return render_template("apology.html", message="Your passwords don't match, please try again")
 
-        # existing_users = db.execute("SELECT username FROM users")
-        # for username in existing_users:
-        #     if username == existing_users  ["username"]:
-        #         return render_template("apology.html", message="that username is already taken")
+        existing_users = db.execute("SELECT username FROM users")
+        for username in existing_users:
+            if username == existing_users  ["username"]:
+                return render_template("apology.html", message="that username is already taken")
 
         # add the new user's account to the databse
         db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
@@ -340,7 +340,7 @@ def playlist_profile():
         button = "follow"
     else:
         button = "unfollow"
-    print(description)
+
     return render_template("playlist_profile.html", id= playlist_id, links=links, description=description, playlist_name=playlist_name,
                                 posts=len(all_tracks), followers=len(followers), current_user=current_user, button=button, user_id=user_id, creator_id=creator_id)
 
@@ -458,13 +458,14 @@ def deletesong():
     track_id = request.args.get("track_id")
     user_id = session["user_id"]
     uploader = db.execute("SELECT added_by FROM tracks WHERE track_id = :track_id", track_id=track_id)
+    print(user_id)
+    print(uploader[0]["added_by"])
+    if user_id == (uploader[0]["added_by"]):
+        db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
+        return jsonify("deleted")
 
-    if not user_id == uploader[0]["added_by"]:
+    else:
         return render_template("apology.html", message = "looks like you're not the uploader of that song, therefore you're not allowed to delete it")
-
-    db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
-    return redirect("/timeline")
-
 
 @app.route("/deleteplaylist")
 @login_required
