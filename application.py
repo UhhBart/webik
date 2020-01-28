@@ -458,9 +458,8 @@ def deletesong():
     track_id = request.args.get("track_id")
     user_id = session["user_id"]
     uploader = db.execute("SELECT added_by FROM tracks WHERE track_id = :track_id", track_id=track_id)
-    print(user_id)
-    print(uploader[0]["added_by"])
-    if user_id == (uploader[0]["added_by"]):
+
+    if int(user_id) == int(uploader[0]["added_by"]):
         db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
         return jsonify("deleted")
 
