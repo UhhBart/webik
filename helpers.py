@@ -108,10 +108,16 @@ def timeline_info(playlists_ids):
 
 def yt_playlist_profile(all_tracks, user_id):
 
+    # adding list for all the songs with their information
     links = []
+
+    # looping all the songs
     for track in all_tracks:
-        # making lists with important data for playlist profile
+
+        # making empty lists for the important information of the song
         track_info = []
+
+        # adding the important information of the song to the list
         track_info.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=track["added_by"]))
         track_info.append(youtube_api(track["link"]))
         track_info.append(track["time"])
@@ -131,16 +137,24 @@ def yt_playlist_profile(all_tracks, user_id):
 
     # most recent songs are at the top of playlist_profile
     links.sort(key=lambda x: x[2], reverse=True)
-    print(links)
+
     return links
 
 def userprofile(user_id):
 
+    # selecting the liked tracks of the user
     liked_tracks = db.execute("SELECT track_id FROM users_likedtracks WHERE user_id = :user_id", user_id=user_id)
 
+    # making lists
     links = []
+
+    # looping all the liked tracks
     for track in liked_tracks:
+
+        # making list to add the link info to
         link_info = []
+
+        # selecting all the required information and adding it
         track_id = track["track_id"]
         info = db.execute("SELECT link, link_desc, added_by, playlist_id, time FROM tracks WHERE track_id = :track_id", track_id = track_id)
         link = youtube_api(info[0]["link"])
@@ -155,11 +169,14 @@ def userprofile(user_id):
         link_info.append(info[0]["time"])
         link_info.append(playlist_id)
 
+        # adding the information of a song to the end list
         links.append(link_info)
 
+    # sorting the list
     links.sort(key=lambda x: x[4], reverse=True)
 
     return links
+
 
 def player_info(playlist_id):
 
