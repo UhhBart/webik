@@ -180,18 +180,32 @@ def userprofile(user_id):
 
 def player_info(playlist_id):
 
+    # selection all the uploads from user
     uploads = db.execute("SELECT link FROM tracks WHERE playlist_id = :playlist_id", playlist_id = playlist_id)
+
+    # list where uploads of user is stored
     all_links = []
+
+    # looping the uploads of the user and stroring the link into the list
     for upload in uploads:
         all_links.append(youtube_api(upload["link"]))
 
     return all_links
 
 def delete_playlist(playlist_id):
+
+    # deleting playlists
     db.execute("DELETE FROM playlists WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
     db.execute("DELETE FROM playlist_users WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
+
     track_id = db.execute("SELECT track_id FROM tracks WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
+
+    # looping the track_id
     for track in track_id:
+
+        # deleting the liked tracks from the user
         db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id", track_id = track["track_id"])
+
+    # deleting tracks
     db.execute("DELETE FROM tracks WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
 
