@@ -7,11 +7,9 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-<<<<<<< HEAD
-from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info, search1
-=======
-from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info, delete_playlist
->>>>>>> 2b6863191c199241fd54813e22d69486f86276d0
+
+from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info, search1, delete_playlist
+
 
 # Configure application
 app = Flask(__name__)
