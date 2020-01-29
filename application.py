@@ -7,7 +7,11 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
+<<<<<<< HEAD
 from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info, search1
+=======
+from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info, delete_playlist
+>>>>>>> 2b6863191c199241fd54813e22d69486f86276d0
 
 # Configure application
 app = Flask(__name__)
@@ -280,26 +284,15 @@ def create():
     """Allow user to create new playlists"""
     if request.method == "POST":
 
-        playlists = db.execute("SELECT playlist_name FROM playlists")
-        for playlist in playlists:
-            print(playlist
-            )
         # put new playlist information into database
-        db.execute("INSERT INTO playlists (playlist_name, description, creator_id) VALUES(:playlist_name, :description, :creator_id)",
-                   playlist_name=request.form.get("playlist"),
-                   description=request.form.get("description"),
-                   creator_id = session['user_id'])
+        db.execute("INSERT INTO playlists (playlist_name, description, creator_id) VALUES(:playlist_name, :description, :creator_id)", playlist_name=request.form.get("playlist"), description=request.form.get("description"), creator_id = session['user_id'])
 
-        # link creator to playlist
+        # select playlist_id
         playlist_id = db.execute("SELECT playlist_id FROM playlists WHERE playlist_name= :playlist_name", playlist_name=request.form.get("playlist"))
+        playlist_id = playlist_id[0]["playlist_id"]
 
-        # ???
-        for playlist in playlist_id:
-            gr_id = playlist["playlist_id"]
-
-        db.execute("INSERT INTO playlist_users (playlist_id, user_id) VALUES(:playlist_id, :user_id)",
-                   user_id=session["user_id"],
-                   playlist_id=gr_id)
+        # link creator to playlist in another tabel
+        db.execute("INSERT INTO playlist_users (playlist_id, user_id) VALUES(:playlist_id, :user_id)", user_id=session["user_id"], playlist_id=playlist_id)
 
         flash("Playlist created!")
         return redirect(url_for("playlists"))
@@ -337,7 +330,7 @@ def playlist_profile():
         button = "follow"
     else:
         button = "unfollow"
-    print(description)
+
     return render_template("playlist_profile.html", id= playlist_id, links=links, description=description, playlist_name=playlist_name,
                                 posts=len(all_tracks), followers=len(followers), current_user=current_user, button=button, user_id=user_id, creator_id=creator_id)
 
@@ -348,6 +341,8 @@ def add_number():
 
     # create form with proper information for user to upload a track
     if request.method == "GET":
+
+        # create a form with all playlists
         playlist_names = []
         playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=session["user_id"])
 
@@ -357,11 +352,11 @@ def add_number():
 
         return render_template("upload.html", playlists=playlist_names)
 
-    elif request.method == "POST":
+    else:
 
         # retrieve proper information
         playlist = request.form.get("playlist")
-        print(playlist)
+
         if not playlist:
             return render_template("apology.html", message = "you did not correctly specifiy to which playlist you'd like to upload.")
 
@@ -413,17 +408,17 @@ def results():
 def follow():
     """Allow users to follow playlists"""
 
-    playlist_id = request.args.get("name")
+    playlist_id = request.args.get("playlist_id")
     user_id = session["user_id"]
 
     if check_following(playlist_id, user_id):
         db.execute("DELETE FROM playlist_users WHERE playlist_id = :playlist_id AND user_id = :user_id", playlist_id=playlist_id, user_id=session["user_id"])
-        return redirect ("/playlist_profile?id=", playlist_id)
+        return jsonify(False)
 
     else:
         db.execute("INSERT INTO playlist_users (user_id, playlist_id) VALUES(:user_id, :playlist_id)",
                    user_id=session["user_id"], playlist_id=playlist_id)
-        return redirect ("/playlist_profile?id=", playlist_id)
+        return jsonify(True)
 
     return render_template("apology.html")
 
@@ -443,7 +438,6 @@ def playlists():
         test.append(playlist_name[0]["playlist_name"])
         test.append(playlist_id)
         ids.append(test)
-    print(ids)
 
     return render_template("playlists.html", ids=ids, playlist_id=playlist_id)
 
@@ -463,7 +457,7 @@ def profile():
     playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=user_id)
 
     links = userprofile(user_id)
-    print(links)
+
     return render_template("profile.html", name=name, uploads=len(uploads), playlists=len(playlists), links=links)
 
 
@@ -475,12 +469,13 @@ def deletesong():
     user_id = session["user_id"]
     uploader = db.execute("SELECT added_by FROM tracks WHERE track_id = :track_id", track_id=track_id)
 
-    if not user_id == uploader[0]["added_by"]:
-        return render_template("apology.html", message = "looks like you're not the uploader of that song, therefore you're not allowed to delete it")
+    if int(user_id) == int(uploader[0]["added_by"]):
+        db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
+        db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id", track_id = track_id)
+        return jsonify(True)
 
-    db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
-    return redirect("/timeline")
-
+    else:
+        return jsonify(False)
 
 @app.route("/deleteplaylist")
 @login_required
@@ -493,9 +488,7 @@ def deleteplaylist():
     if not user_id == creator[0]["creator_id"]:
         return render_template("apology.html", message = "you are not the creator of this playlist, therefore you're not allowed to delete it")
 
-    db.execute("DELETE FROM playlists WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
-    db.execute("DELETE FROM playlist_users WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
-    db.execute("DELETE FROM tracks WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
+    delete_playlist(playlist_id)
     return redirect ("/playlists")
 
 @app.route("/upvote")
@@ -507,12 +500,12 @@ def upvote():
     if check_liked(user_id, track_id):
         db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id AND user_id= :user_id", track_id=track_id, user_id=user_id)
         db.execute("UPDATE tracks SET likes = likes - 1 WHERE track_id = :track_id", track_id=track_id)
-        return jsonify("disliked")
+        return jsonify(False)
     else:
         db.execute("INSERT INTO users_likedtracks (track_id, user_id) VALUES (:track_id, :user_id)", track_id=track_id, user_id=user_id)
         db.execute("UPDATE tracks SET likes = likes + 1 WHERE track_id = :track_id", track_id=track_id)
-        return jsonify("liked")
-    return render_template("apology.html", messafe = "ERROR: looks like you somehow managed to break our site")
+        return jsonify(True)
+
 
 @app.route("/player", methods=["GET"])
 def player():
@@ -521,15 +514,3 @@ def player():
     videos = (player_info(playlist_id))
 
     return render_template("player.html", videos = videos)
-
-# # copied from finance
-# def errorhandler(e):
-#     """Handle error"""
-#     if not isinstance(e, HTTPException):
-#         e = InternalServerError()
-#         return render_template("apology.html", message = "" )(e.name, e.code)
-
-
-# # Listen for errors
-# for code in default_exceptions:
-#     app.errorhandler(code)(errorhandler)

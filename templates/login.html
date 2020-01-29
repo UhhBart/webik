@@ -68,7 +68,7 @@
     function  checking() {
         $.get("/check_login_password?password="+ passwords.value + "&username=" + users_name.value, function (chec){
             if (chec == false) {
-                error.innerHTML = "Username and do not match password";
+                error.innerHTML = "Username does not match with password";
                 passwords.setAttribute("class", "form-control is-invalid");
             }
             else {

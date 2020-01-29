@@ -16,7 +16,7 @@
                     <button id="upload-button" type="button">+ Upload</button>
                 </a>
                 <a href="/player?playlist_id={{id}}">
-                    <button id="upload-button" type="button">&#9658; Start</button>
+                    <button id="upload-button" type="button">&#9658; Play</button>
                 </a>
             </h3>
 
@@ -37,15 +37,15 @@
         <!--allow user to delete playlist if they're the creator-->
         {% if creator_id == user_id %}
             <a href="/deleteplaylist?playlist_id={{id}}">
-                <button id= 'delete-playlist-button' class="btn btn-outline-danger" type="button" onclick= "deleted()">Delete Playlist</button>
+                <button id= 'delete-playlist-button' class="btn btn-outline-danger" type="button" onclick= "delete_playlist({{id}})">Delete Playlist</button>
             </a></h5>
 
         <!--if user is not creator, allow user to follow or unfollow-->
         {% else %}
             {% if button == "follow" %}
-                <a href="/follow?name={{id}}"><button id="unfollow-button" type="button">Following</button></a></h5>
+                <a id="blocked_anchor"><button id="follow-button" type="button" onClick="follow({{id}})">Following</button></a></h5>
             {% else %}
-                <a href="/follow?name={{id}}"><button id="follow-button"  type="button">+ Follow!</button></a></h5>
+                <a id="blocked_anchor"><button id="follow-button" type="button" onClick="follow({{id}})">+ Follow!</button></a></h5>
             {% endif %}
         {% endif %}
     </div>
@@ -82,16 +82,16 @@
         {% endif %}
 
         <!--display button to allow user to like or unlike a song-->
-        {% if link[6] != "liked" %}
+        {% if link[7] != "liked" %}
             <div>
                 {{link[5]}} Likes |
-                <a href="/upvote?track_id={{link[4]}}"><button id="like-button" type="button">+ Like</button></a>
+                <a id="blocked_anchor"><button id="like-button" type="button" onClick = "like({{link[4]}})">+ Like</button></a>
             </div>
 
         {% else %}
             <div>
                 {{link[5]}} Likes |
-                <a href="/upvote?track_id={{link[4]}}"><button id="unlike-button" type="button">- Unlike</button></a>
+                <a id="blocked_anchor"><button id="like-button" type="button" onClick = "like({{link[4]}})">- Unlike</button></a>
             </div>
 
         {% endif %}
@@ -101,29 +101,75 @@
         Uploaded at {{link[2]}}
 
         <!--if user is the uploader of the song, allow user to delete song-->
-        {% if link[0][0]["username"]==current_user %}
-            | <a href="/deletesong?track_id={{link[4]}}"><button id="delete-song-button" type="button" onclick= "deleted()">Delete</button></a>
+        {% if link[0]==current_user %}
+            | <a id="blocked_anchor"><button id="delete-song-button" type="button" onclick= "delete_song({{link[4]}})">Delete</button></a>
         {% endif %}
     </div>
     <br>
     {% endfor %}
 
 <script>
-    var follow = document.getElementById("follow-button")
-    var unfollow = document.getElementById("unfollow-button")
 
-
-        function deleted() {
-            console.log("hoi")
+    function delete_song(track_id) {
+        let delete_song_button = document.getElementById("delete-song-button");
+        document.getElementById("blocked_anchor").addEventListener("click", function(event){
+            event.preventDefault();
+        });
             var returndialog = confirm("Are you sure you want to delete this song.");
             if (returndialog == true) {
-                console.log("oke")
-
-            } else {
-                console.log("no")
+                $.get("/deletesong?track_id="+track_id, function(deleted) {
+                    if (deleted == true) {
+                        delete_song_button.innerHTML = "Deleted!";
+                        alert("The song will disappear on your next page refresh!");
+                    }
+                    else {
+                        alert("ERROR: could not remove song because you are not the original uploader.")
+                    }
+                });
             }
-        };
+        }
 
+    // function delete_playlist(playlist_id) {
+    //     var returndialog = confirm("Are you sure you want to delete this playlist.");
+    //     if (returndialog == true) {
+    //         $.get("/deleteplaylist?playlist_id=" + playlist_id)
+    //     } else {
+    //     }
+    // }
+
+    function like(track_id) {
+        let like_button = document.getElementById("like-button");
+        document.getElementById("blocked_anchor").addEventListener("click", function(event){
+            event.preventDefault();
+        });
+        $.get("/upvote?track_id="+track_id, function(liked) {
+            if (liked == false) {
+                like_button.innerHTML = "Unliked";
+                alert("Removed from your liked songs! The like counter will update on your next page refresh.");
+            }
+            else {
+                like_button.innerHTML = "Liked!";
+                alert("Added to your liked songs! The like counter will update on your next page refresh.");
+            }
+        });
+    }
+
+    function follow(playlist_id) {
+        let follow_button = document.getElementById("follow-button");
+        document.getElementById("blocked_anchor").addEventListener("click", function(event){
+            event.preventDefault();
+        });
+        $.get("/follow?playlist_id="+playlist_id, function(followed) {
+            if (followed == false) {
+                follow_button.innerHTML = "Unfollowed";
+                alert("You are no longer following this playlist.");
+            }
+            else {
+                follow_button.innerHTML = "Followed!";
+                alert("You are now following this playlist!");
+            }
+        })
+    }
 
     </script>
 {% endblock %}

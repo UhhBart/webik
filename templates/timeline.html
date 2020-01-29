@@ -65,17 +65,17 @@
                 {% if link[8] != "liked" %}
                     <div>
                         {{link[6]}} Likes |
-                        <a href="/upvote?track_id={{link[7]}}">
-                            <button id="like-button" type="button">+ Like</button>
+                        <a id="blocked_anchor">
+                            <button id="like-button" type="button" onClick="like({{link[7]}})">+ Like</button>
                         </a>
                     </div>
 
                 {% else %}
                     <div>
-                    {{link[6]}} Likes |
-                    <a href="/upvote?track_id={{link[7]}}">
-                        <button id="unlike-button" type="button">Liked</button>
-                    </a>
+                        {{link[6]}} Likes |
+                        <a id="blocked_anchor">
+                            <button id="like-button" type="button" onClick="like({{link[7]}})">- Unlike</button>
+                        </a>
                     </div>
                 {% endif %}
 
@@ -87,4 +87,23 @@
         <br>
         {% endfor %}
     </body>
+
+<script>
+    function like(track_id) {
+        let like_button = document.getElementById("like-button");
+        document.getElementById("blocked_anchor").addEventListener("click", function(event){
+            event.preventDefault();
+        });
+        $.get("/upvote?track_id="+track_id, function(liked) {
+            if (liked == false) {
+                like_button.innerHTML = "Unliked";
+                alert("Removed from your liked songs! The like counter will update on your next page refresh.");
+            }
+            else {
+                like_button.innerHTML = "Liked!";
+                alert("Added to your liked songs! The like counter will update on your next page refresh.");
+            }
+        })
+    }
+</script>
 {% endblock %}
