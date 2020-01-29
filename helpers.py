@@ -23,8 +23,6 @@ def youtube_api(link):
             return item
 
 
-
-
 def login_required(f):
     """
     Decorate routes to require login.
@@ -38,6 +36,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 def check_following(playlist_id, user_id):
     """Functions that checks if playlist is followed by user"""
 
@@ -46,6 +45,7 @@ def check_following(playlist_id, user_id):
     for i in check_follow:
         if i["user_id"] == user_id:
             return True
+
 
 def link_check(link):
     if "youtube.com/watch?v=" in link:
@@ -164,10 +164,17 @@ def userprofile(user_id):
 def player_info(playlist_id):
 
     uploads = db.execute("SELECT link FROM tracks WHERE playlist_id = :playlist_id", playlist_id = playlist_id)
-    nani = []
+    all_links = []
     for upload in uploads:
-        print(upload["link"])
-        nani.append(youtube_api(upload["link"]))
+        all_links.append(youtube_api(upload["link"]))
 
-    return nani
+    return all_links
+
+def delete_playlist(playlist_id):
+    db.execute("DELETE FROM playlists WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
+    db.execute("DELETE FROM playlist_users WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
+    track_id = db.execute("SELECT track_id FROM tracks WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
+    for track in track_id:
+        db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id", track_id = track["track_id"])
+    db.execute("DELETE FROM tracks WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
 

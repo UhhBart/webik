@@ -37,7 +37,7 @@
         <!--allow user to delete playlist if they're the creator-->
         {% if creator_id == user_id %}
             <a href="/deleteplaylist?playlist_id={{id}}">
-                <button id= 'delete-playlist-button' class="btn btn-outline-danger" type="button" onclick= "deletedplaylist()">Delete Playlist</button>
+                <button id= 'delete-playlist-button' class="btn btn-outline-danger" type="button" onclick= "delete_playlist({{id}})">Delete Playlist</button>
             </a></h5>
 
         <!--if user is not creator, allow user to follow or unfollow-->
@@ -102,7 +102,7 @@
 
         <!--if user is the uploader of the song, allow user to delete song-->
         {% if link[0]==current_user %}
-            | <a href="/deletesong?track_id={{link[4]}}"><button id="delete-song-button" type="button" onclick= "deletedsong()">Delete</button></a>
+            | <a id="blocked_anchor"><button id="delete-song-button" type="button" onclick= "delete_song({{link[4]}})">Delete</button></a>
         {% endif %}
     </div>
     <br>
@@ -110,21 +110,32 @@
 
 <script>
 
-        function deletedsong() {
+    function delete_song(track_id) {
+        let delete_song_button = document.getElementById("delete-song-button");
+        document.getElementById("blocked_anchor").addEventListener("click", function(event){
+            event.preventDefault();
+        });
             var returndialog = confirm("Are you sure you want to delete this song.");
             if (returndialog == true) {
-
-            } else {
+                $.get("/deletesong?track_id="+track_id, function(deleted) {
+                    if (deleted == true) {
+                        delete_song_button.innerHTML = "Deleted!";
+                        alert("The song will disappear on your next page refresh!");
+                    }
+                    else {
+                        alert("ERROR: could not remove song because you are not the original uploader.")
+                    }
+                });
             }
         }
 
-        function deletedplaylist() {
-            var returndialog = confirm("Are you sure you want to delete this playlist.");
-            if (returndialog == true) {
-
-            } else {
-            }
-        }
+    // function delete_playlist(playlist_id) {
+    //     var returndialog = confirm("Are you sure you want to delete this playlist.");
+    //     if (returndialog == true) {
+    //         $.get("/deleteplaylist?playlist_id=" + playlist_id)
+    //     } else {
+    //     }
+    // }
 
     function like(track_id) {
         let like_button = document.getElementById("like-button");

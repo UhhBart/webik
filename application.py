@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info
+from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info, delete_playlist
 
 # Configure application
 app = Flask(__name__)
@@ -446,10 +446,10 @@ def deletesong():
     if int(user_id) == int(uploader[0]["added_by"]):
         db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
         db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id", track_id = track_id)
-        return jsonify("deleted")
+        return jsonify(True)
 
     else:
-        return render_template("apology.html", message = "looks like you're not the uploader of that song, therefore you're not allowed to delete it")
+        return jsonify(False)
 
 @app.route("/deleteplaylist")
 @login_required
@@ -462,9 +462,7 @@ def deleteplaylist():
     if not user_id == creator[0]["creator_id"]:
         return render_template("apology.html", message = "you are not the creator of this playlist, therefore you're not allowed to delete it")
 
-    db.execute("DELETE FROM playlists WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
-    db.execute("DELETE FROM playlist_users WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
-    db.execute("DELETE FROM tracks WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
+    delete_playlist(playlist_id)
     return redirect ("/playlists")
 
 @app.route("/upvote")
@@ -490,15 +488,3 @@ def player():
     videos = (player_info(playlist_id))
 
     return render_template("player.html", videos = videos)
-
-# # copied from finance
-# def errorhandler(e):
-#     """Handle error"""
-#     if not isinstance(e, HTTPException):
-#         e = InternalServerError()
-#         return render_template("apology.html", message = "" )(e.name, e.code)
-
-
-# # Listen for errors
-# for code in default_exceptions:
-#     app.errorhandler(code)(errorhandler)

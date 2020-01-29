@@ -78,30 +78,6 @@ border-radius: 15px 50px 30px;
   cursor: hand;
 }
 
-#unfollow-button {
-  font-size: 10pt;
-  background-color: rgba(255, 255, 255, 0.33);
-  border: 1px;
-  border-radius: 3px;
-  width: 85px;
-  height: 30px;
-  top: 50px;
-  left: 50px;
-  cursor: hand;
-}
-
-#unfollow-button:hover {
-  font-size: 10pt;
-  background-color: rgba(255, 50, 50, 0.66);
-  border: 1px;
-  border-radius: 3px;
-  width: 85px;
-  height: 30px;
-  top: 50px;
-  left: 50px;
-  cursor: hand;
-}
-
 #upload-button {
   color: #000000;
   font-size: 10pt;
@@ -226,31 +202,6 @@ border-radius: 15px 50px 30px;
   cursor: hand;
 }
 
-#unlike-button {
-  color: #000000;
-  font-size: 10pt;
-  background-color: rgba(255, 255, 255, 0.33);
-  border: 1px;
-  border-radius: 3px;
-  width: 85px;
-  height: 30px;
-  top: 50px;
-  left: 50px;
-  cursor: hand;
-}
-
-#unlike-button:hover {
-  color: #000000;
-  font-size: 10pt;
-  background-color: rgba(255, 50, 50, 0.66);
-  border: 1px;
-  border-radius: 3px;
-  width: 85px;
-  height: 30px;
-  top: 50px;
-  left: 50px;
-  cursor: hand;
-}
 
 #player {
     width: 680px; /* you have to have a size or this method doesn't work */
