@@ -273,21 +273,14 @@ def create():
     if request.method == "POST":
 
         # put new playlist information into database
-        db.execute("INSERT INTO playlists (playlist_name, description, creator_id) VALUES(:playlist_name, :description, :creator_id)",
-                   playlist_name=request.form.get("playlist"),
-                   description=request.form.get("description"),
-                   creator_id = session['user_id'])
+        db.execute("INSERT INTO playlists (playlist_name, description, creator_id) VALUES(:playlist_name, :description, :creator_id)", playlist_name=request.form.get("playlist"), description=request.form.get("description"), creator_id = session['user_id'])
 
-        # link creator to playlist
+        # select playlist_id
         playlist_id = db.execute("SELECT playlist_id FROM playlists WHERE playlist_name= :playlist_name", playlist_name=request.form.get("playlist"))
+        playlist_id = playlist_id[0]["playlist_id"]
 
-        # ???
-        for playlist in playlist_id:
-            gr_id = playlist["playlist_id"]
-
-        db.execute("INSERT INTO playlist_users (playlist_id, user_id) VALUES(:playlist_id, :user_id)",
-                   user_id=session["user_id"],
-                   playlist_id=gr_id)
+        # link creator to playlist in another tabel
+        db.execute("INSERT INTO playlist_users (playlist_id, user_id) VALUES(:playlist_id, :user_id)", user_id=session["user_id"], playlist_id=playlist_id)
 
         flash("Playlist created!")
         return redirect(url_for("playlists"))
@@ -336,6 +329,8 @@ def add_number():
 
     # create form with proper information for user to upload a track
     if request.method == "GET":
+
+        # create a form with all playlists
         playlist_names = []
         playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=session["user_id"])
 
@@ -345,7 +340,7 @@ def add_number():
 
         return render_template("upload.html", playlists=playlist_names)
 
-    elif request.method == "POST":
+    else:
 
         # retrieve proper information
         playlist = request.form.get("playlist")
