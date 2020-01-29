@@ -171,3 +171,15 @@ def player_info(playlist_id):
 
     return nani
 
+def search1(q):
+
+    # make the search input into the a form that if it contains return true
+    s = "%" + q + "%"
+
+    # search the database for the search input contains something of the playlist name
+    result_playlist = db.execute("SELECT * FROM playlists WHERE (playlist_name LIKE :q) ORDER BY playlist_name", q=s)
+
+    # search the database for the search input contains something of the description
+    result_description = db.execute("SELECT * FROM playlists WHERE (description LIKE :q) ORDER BY description", q=s)
+
+    return result_description, result_playlist

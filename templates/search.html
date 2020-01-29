@@ -16,27 +16,58 @@
         <form class="form" action= "/search" method="POST" name="search">
 
             <!--ask user to put in playlist name-->
-            <div>
-                <p align="left">
-                    <strong>Search for playlist by name</strong>
-                </p>
-                <input class="form-control" id="playlist" name="playlist" type="text" autocomplete="off" placeholder="Enter a playlist name" required>
+
+            <div class="form-group">
+                <p align="left"><strong>Search for playlist by name</strong></p>
+                <input type="text" class="form-control" name="playlist" id="playlist" placeholder="Search for either a playlist or on a description" onkeyup="checks()" required>
+                <div class="invalid-feedback" id="taken">
+                    Provide input
+                </div>
             </div>
             <br>
 
-            <!--allow user to put in a playlist description-->
-            <!--<div>-->
-            <!--    <p align="left">-->
-            <!--        <strong>Playlist description</strong>-->
-            <!--    <br>-->
-            <!--    (optional)-->
-            <!--    </p>-->
-            <!--    <input class="form-control" id="description" name="description" type="text" autocomplete="off" placeholder="Enter a playlist description">-->
-            <!--</div>-->
-            <br>
             <div align="center">
                 <input class="d-block btn btn-outline-light" type="submit" value="Search!" id="search">
             </div>
         </form>
+        <script>
+        let users_name = document.getElementById("playlist");
+        let alert_user = document.getElementById("taken");
+
+
+        function  checks() {
+            $.get("/check_playlist_search?playlist="+ users_name.value, function (checked){
+                if (checked == false) {
+                    alert_user.innerHTML = "Found nothing"
+                    users_name.setAttribute("class", "form-control is-invalid");
+                }
+                else {
+                    alert_user.innerHTML = "Found something";
+                    users_name.setAttribute("class", "form-control");
+                }
+            });
+        }
+            // https://getbootstrap.com/docs/4.1/components/forms/#validation
+        (function() {
+          'use strict';
+          window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementById('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+              form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false || users_name.getAttribute("class") == "form-control is-invalid") {
+                  event.preventDefault();
+                  event.stopPropagation();
+
+                }
+                form.classList.add('was-validated');
+              }, false);
+            });
+          }, false);
+        })();
+
+
+        </script>
     </body>
 {% endblock %}

@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info
+from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info, search1
 
 # Configure application
 app = Flask(__name__)
@@ -260,11 +260,19 @@ def timeline():
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
-    if request.method == "GET":
-        return render_template("search.html")
+    if request.method == "POST":
 
-    elif request.method == "POST":
-        return render_template("results.html")
+        # get search input from user name it q
+        q = request.form.get("playlist")
+
+        # search the database for the users input with the function search
+        result_description, result_playlist = search1(q)
+        print(result_description, result_playlist[0])
+        # return a new template with the result if something is found
+        return render_template("results.html", result_playlist=result_playlist, result_description=result_description)
+
+    else:
+        return render_template("search.html")
 
 @app.route("/create", methods=["GET", "POST"])
 @login_required
@@ -372,6 +380,25 @@ def add_number():
         # inform user upload was succesful and redirect to timeline
         flash("Upload succesful!")
         return redirect("/timeline")
+
+
+@app.route("/check_playlist_search", methods=["GET"])
+def check_playlist_search():
+    """Check username availability"""
+
+    # get search input from user name it q
+    q = request.args.get("playlist")
+
+    # search for the users input with helper function search1
+    result_description, result_playlist = search1(q)
+
+    # Ensure that input exists
+    if len(result_description) == 0 and len(result_playlist) == 0:
+        return jsonify(False)
+
+    else:
+        return jsonify(True)
+
 
 
 @app.route("/results")
