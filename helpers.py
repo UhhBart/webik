@@ -109,10 +109,13 @@ def timeline_info(playlists_ids):
         # appending important info to the list
         track_info.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=track["added_by"]))
         track_info.append(youtube_api(track["link"]))
+
         track_info.append(track["time"])
         track_info.append(db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=track["playlist_id"]))
+
         track_info.append(track["link_desc"])
         track_info.append(db.execute("SELECT playlist_id FROM playlists WHERE playlist_id = :playlist_id", playlist_id=track["playlist_id"]))
+
         track_info.append(track["likes"])
         track_info.append(track["track_id"])
 
@@ -146,8 +149,10 @@ def yt_playlist_profile(all_tracks, user_id):
         # adding the important information of the song to the list
         track_info.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=track["added_by"]))
         track_info.append(youtube_api(track["link"]))
+
         track_info.append(track["time"])
         track_info.append(track["link_desc"])
+
         track_info.append(track["track_id"])
         track_info.append(track["likes"])
         track_info.append(track["added_by"])
@@ -184,12 +189,15 @@ def userprofile(user_id):
         track_id = track["track_id"]
         info = db.execute("SELECT link, link_desc, added_by, playlist_id, time FROM tracks WHERE track_id = :track_id", track_id = track_id)
         link = youtube_api(info[0]["link"])
+
         link_info.append(link)
         link_info.append(info[0]["link_desc"])
         user_id = info[0]["added_by"]
+
         adder = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = user_id)
         link_info.append(adder[0]["username"])
         playlist_id = info[0]["playlist_id"]
+
         playlist = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id = playlist_id)
         link_info.append(playlist[0]["playlist_name"])
         link_info.append(info[0]["time"])
@@ -235,6 +243,7 @@ def delete_playlist(playlist_id):
 
     # deleting tracks
     db.execute("DELETE FROM tracks WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
+
 
 
 def search_helper(search_input):
