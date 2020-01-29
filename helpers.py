@@ -4,11 +4,11 @@ import os
 from cs50 import SQL
 from flask import redirect, render_template, request, session
 from functools import wraps
-db = SQL("sqlite:///project.db")
+db = SQL("sqlite:///vibecheck.db")
 
 
 def youtube_api(link):
-
+    """Retrieve the required information from a YouTube link"""
     # splitting the youtube link for only the usefull part used for the API and returning it
     if "=" in link:
         link = link.split("=")
@@ -56,6 +56,7 @@ def check_following(playlist_id, user_id):
 
 
 def link_check(link):
+    """Check if the link was a valid YouTube link"""
 
     # checking if the link that is submitted is a valid youtube link
     if "youtube.com/watch?v=" in link:
@@ -69,17 +70,19 @@ def link_check(link):
 
 
 def check_liked(user_id, track_id):
+    """Check if the user has already liked the song"""
 
     # selecting from the liked tracks from the database
     check_liked = db.execute("SELECT user_id FROM users_likedtracks WHERE track_id = :track_id", track_id=track_id)
 
     # checking if the user liked it
-    for i in check_liked:
-        if i["user_id"] == user_id:
+    for user in check_liked:
+        if user["user_id"] == user_id:
             return True
 
 
 def timeline_info(playlists_ids):
+    """Generate a list in the correct format to render timeline"""
 
     # making list for playlist
     playlists = []
@@ -136,6 +139,7 @@ def timeline_info(playlists_ids):
 
 
 def yt_playlist_profile(all_tracks, user_id):
+    """Generate a list in the correct format to render a playlist"""
 
     # adding list for all the songs with their information
     links = []
@@ -172,6 +176,7 @@ def yt_playlist_profile(all_tracks, user_id):
     return links
 
 def userprofile(user_id):
+    """Generate a list in the correct format to render user profile"""
 
     # selecting the liked tracks of the user
     liked_tracks = db.execute("SELECT track_id FROM users_likedtracks WHERE user_id = :user_id", user_id=user_id)
@@ -213,6 +218,7 @@ def userprofile(user_id):
 
 
 def player_info(playlist_id):
+    """Generate a list in the proper format to allow the player to function"""
 
     # selection all the uploads from user
     uploads = db.execute("SELECT link FROM tracks WHERE playlist_id = :playlist_id", playlist_id = playlist_id)
@@ -228,6 +234,7 @@ def player_info(playlist_id):
 
 
 def delete_playlist(playlist_id):
+    """Delete all information attached to a playlist"""
 
     # deleting playlists
     db.execute("DELETE FROM playlists WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
@@ -247,6 +254,7 @@ def delete_playlist(playlist_id):
 
 
 def search_helper(search_input):
+    """Search database based on user input"""
 
     # make the search input into the a form that if it contains return true
     keyword = "%" + search_input + "%"

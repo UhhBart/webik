@@ -32,7 +32,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///project.db")
+db = SQL("sqlite:///vibecheck.db")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -69,8 +69,11 @@ def register():
                 return render_template("apology.html", message="that username is already taken")
 
         # add the new user's account to the databse
-        db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
-                   username=request.form.get("username"), hash=generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
+        new_user = db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
+                            username=request.form.get("username"), hash=generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
+
+        # automatically log a user in after registering
+        session["user_id"] = new_user
 
         return redirect("/timeline")
 
@@ -81,6 +84,7 @@ def register():
 @app.route("/change_password", methods=["POST", "GET"])
 @login_required
 def change_password():
+    """Change user's password"""
 
     if request.method == "POST":
 
@@ -266,6 +270,8 @@ def timeline():
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
+    """Search for existing playlists in database"""
+
     if request.method == "POST":
 
         # get search input from user name it q
@@ -285,6 +291,7 @@ def search():
 @login_required
 def create():
     """Allow user to create new playlists"""
+
     if request.method == "POST":
 
         # put new playlist information into database
@@ -466,6 +473,7 @@ def profile():
 @app.route("/deletesong")
 @login_required
 def deletesong():
+    """Delete song from database"""
 
     # gather all information needed to delete song
     track_id = request.args.get("track_id")
@@ -485,6 +493,7 @@ def deletesong():
 @app.route("/deleteplaylist")
 @login_required
 def deleteplaylist():
+    """Delete playlist from database"""
 
     # gather all information needed to delete song
     playlist_id = request.args.get("playlist_id")
@@ -502,6 +511,7 @@ def deleteplaylist():
 @app.route("/like")
 @login_required
 def like():
+    """Like a song and add that song to personal profile"""
 
     # gather all required information
     track_id = request.args.get("track_id")
@@ -522,6 +532,7 @@ def like():
 
 @app.route("/player", methods=["GET"])
 def player():
+    """Create player to automatically play all songs from a specific playlist"""
 
     # gather all required information
     playlist_id = request.args.get("playlist_id")
