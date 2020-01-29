@@ -10,15 +10,19 @@ db = SQL("sqlite:///project.db")
 
 def youtube_api(link):
 
+    # splitting the youtube link for only the usefull part used for the API and returning it
     if "=" in link:
         link = link.split("=")
         link = link[1].split("&")
 
         for item in link:
             return item
+
+    # splitting youtu.be link for only the usefull part used for the API and returning it
     else:
         link = link.split("e/")
         link = link[1].split("?")
+
         for item in link:
             return item
 
@@ -31,7 +35,9 @@ def login_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
+
         if session.get("user_id") is None:
+
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
@@ -40,31 +46,42 @@ def login_required(f):
 def check_following(playlist_id, user_id):
     """Functions that checks if playlist is followed by user"""
 
+    # selecting from the database the user followed playlists
     check_follow = db.execute("SELECT user_id FROM playlist_users WHERE playlist_id = :playlist_id",
                               playlist_id=playlist_id)
+
+    # looping the follows and checking it
     for i in check_follow:
         if i["user_id"] == user_id:
             return True
 
 
 def link_check(link):
+
+    # checking if the link that is submitted is a valid youtube link
     if "youtube.com/watch?v=" in link:
         return 1
+
     elif "youtu.be/" in link:
         return 2
+
     else:
         return False
 
 def check_liked(user_id, track_id):
 
+    # selecting from the liked tracks from the database
     check_liked = db.execute("SELECT user_id FROM users_likedtracks WHERE track_id = :track_id", track_id=track_id)
 
+    # checking if the user liked it
     for i in check_liked:
         if i["user_id"] == user_id:
             return True
 
 
 def timeline_info(playlists_ids):
+
+    # making list for playlist
     playlists = []
 
     # select all playlists from user
@@ -73,16 +90,23 @@ def timeline_info(playlists_ids):
 
     # retrieve proper information from playlists
     all_tracks = []
+
+    # looping the plalists
     for playlist_id in playlists:
         tracks = db.execute("SELECT * FROM tracks WHERE playlist_id= :playlist_id", playlist_id=playlist_id)
+
+        # looping the tracks in the playlists and adding them to the tracks
         for track in tracks:
             all_tracks.append(track)
 
     data = []
 
     for track in all_tracks:
+
         # making lists with important data for timeline
         track_info = []
+
+        # appending important info to the list
         track_info.append(db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=track["added_by"]))
         track_info.append(youtube_api(track["link"]))
         track_info.append(track["time"])
@@ -95,6 +119,7 @@ def timeline_info(playlists_ids):
         # information for the liked/unliked button
         if check_liked(session["user_id"], track["track_id"]):
             track_info.append("liked")
+
         else:
             track_info.append("unliked")
 
@@ -103,6 +128,7 @@ def timeline_info(playlists_ids):
 
     # most recent songs are at the top of timeline
     data.sort(key=lambda x: x[2], reverse=True)
+
     return data
 
 
