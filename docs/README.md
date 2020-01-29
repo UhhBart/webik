@@ -41,7 +41,6 @@ Naomi Rood:
 
 Toon Flipse:
 * Implemented JavaScript to check whether username/ playlist names are available
-* Implemented JavaScript to check username & password when user tries to log in
 * Implemented Search functionality
 ---
 ### Repository lay-out
