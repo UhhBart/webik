@@ -50,7 +50,9 @@ Toon Flipse:
 * Helpers.py contains some functions that require a lot of lines, making application.py look cluttered. Therefore they were put in the helpers file.
 * The static folder contains the logo of the website and a css file which contains the designs of elements of the website.
 * The Docs folder contains a screenshot from the website and this README file.
-
+---
+### Note
+The database file already contains some entries, as to easily showcase established features of the website.
 <!--stackedit_data:
 eyJoaXN0b3J5IjpbMTgzNTA0NzcyMiwtMjYyNDQ3NDc2LC05OD
 MyNzU0MDgsLTE1OTM3MTQzMTQsMTc3NTIwODQyMywtMjA3MzU0
