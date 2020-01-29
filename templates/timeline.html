@@ -61,12 +61,13 @@
                     </div>
                 {% endif %}
 
+                <br>
                 <!--display like / unlike buttons depending on whether song was already liked or not-->
                 {% if link[8] != "liked" %}
                     <div>
                         {{link[6]}} Likes |
                         <a id="blocked_anchor">
-                            <button id="like-button" type="button" onClick="like({{link[7]}})">+ Like</button>
+                            <button id="like-button" type="button" onClick="like({{link[7]}})">+ Like!</button>
                         </a>
                     </div>
 
@@ -94,13 +95,13 @@
         document.getElementById("blocked_anchor").addEventListener("click", function(event){
             event.preventDefault();
         });
-        $.get("/upvote?track_id="+track_id, function(liked) {
+        $.get("/like?track_id="+track_id, function(liked) {
             if (liked == false) {
-                like_button.innerHTML = "Unliked";
+                like_button.innerHTML = "+ Like!";
                 alert("Removed from your liked songs! The like counter will update on your next page refresh.");
             }
             else {
-                like_button.innerHTML = "Liked!";
+                like_button.innerHTML = "- Unlike";
                 alert("Added to your liked songs! The like counter will update on your next page refresh.");
             }
         })

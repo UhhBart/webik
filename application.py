@@ -7,8 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
-
-from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info, search1, delete_playlist
+from helpers import login_required, youtube_api, check_following, link_check, check_liked, timeline_info, yt_playlist_profile, userprofile, player_info, search_helper, delete_playlist
 
 
 # Configure application
@@ -63,14 +62,15 @@ def register():
         elif not password == confirm_password:
             return render_template("apology.html", message="Your passwords don't match, please try again")
 
-        # existing_users = db.execute("SELECT username FROM users")
-        # for username in existing_users:
-        #     if username == existing_users  ["username"]:
-        #         return render_template("apology.html", message="that username is already taken")
+        # extra check to make sure username isn't taken
+        existing_users = db.execute("SELECT username FROM users")
+        for existing_username in existing_users:
+            if existing_username == username:
+                return render_template("apology.html", message="that username is already taken")
 
         # add the new user's account to the databse
         db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
-                  username=request.form.get("username"), hash=generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
+                   username=request.form.get("username"), hash=generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8))
 
         return redirect("/timeline")
 
@@ -216,6 +216,7 @@ def check_playlist():
 
     return jsonify(True)
 
+
 @app.route("/check_login_username", methods=["GET"])
 def check_login_username():
     """Check username availability"""
@@ -231,6 +232,7 @@ def check_login_username():
     else:
         return jsonify(True)
 
+
 @app.route("/check_login_password", methods=["GET"])
 def check_login_password():
     """Check username availability"""
@@ -244,6 +246,7 @@ def check_login_password():
         return jsonify(False)
     else:
         return jsonify(True)
+
 
 @app.route("/timeline")
 @login_required
@@ -260,6 +263,7 @@ def timeline():
 
     return render_template("timeline.html", data=data, name=name)
 
+
 @app.route("/search", methods=["GET", "POST"])
 def search():
     if request.method == "POST":
@@ -268,13 +272,14 @@ def search():
         q = request.form.get("playlist")
 
         # search the database for the users input with the function search
-        result_description, result_playlist = search1(q)
-        print(result_description, result_playlist[0])
+        result_description, result_playlist = search_helper(q)
+
         # return a new template with the result if something is found
         return render_template("results.html", result_playlist=result_playlist, result_description=result_description)
 
     else:
         return render_template("search.html")
+
 
 @app.route("/create", methods=["GET", "POST"])
 @login_required
@@ -283,14 +288,16 @@ def create():
     if request.method == "POST":
 
         # put new playlist information into database
-        db.execute("INSERT INTO playlists (playlist_name, description, creator_id) VALUES(:playlist_name, :description, :creator_id)", playlist_name=request.form.get("playlist"), description=request.form.get("description"), creator_id = session['user_id'])
+        db.execute("INSERT INTO playlists (playlist_name, description, creator_id) VALUES(:playlist_name, :description, :creator_id)",
+                   playlist_name=request.form.get("playlist"), description=request.form.get("description"), creator_id=session['user_id'])
 
         # select playlist_id
-        playlist_id = db.execute("SELECT playlist_id FROM playlists WHERE playlist_name= :playlist_name", playlist_name=request.form.get("playlist"))
-        playlist_id = playlist_id[0]["playlist_id"]
+        playlist_id = db.execute("SELECT playlist_id FROM playlists WHERE playlist_name= :playlist_name",
+                                playlist_name=request.form.get("playlist"))[0]["playlist_id"]
 
         # link creator to playlist in another tabel
-        db.execute("INSERT INTO playlist_users (playlist_id, user_id) VALUES(:playlist_id, :user_id)", user_id=session["user_id"], playlist_id=playlist_id)
+        db.execute("INSERT INTO playlist_users (playlist_id, user_id) VALUES(:playlist_id, :user_id)",
+                   user_id=session["user_id"], playlist_id=playlist_id)
 
         flash("Playlist created!")
         return redirect(url_for("playlists"))
@@ -306,7 +313,7 @@ def playlist_profile():
 
     # getting the info for the playlist_profile
     user_id = session["user_id"]
-    current_user = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id = user_id)
+    current_user = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=user_id)
 
     # get playlist_id
     playlist_id = request.args.get("id")
@@ -329,8 +336,9 @@ def playlist_profile():
     else:
         button = "unfollow"
 
-    return render_template("playlist_profile.html", id= playlist_id, links=links, description=description, playlist_name=playlist_name,
-                                posts=len(all_tracks), followers=len(followers), current_user=current_user, button=button, user_id=user_id, creator_id=creator_id)
+    return render_template("playlist_profile.html", id=playlist_id, links=links, description=description, playlist_name=playlist_name,
+                           posts=len(all_tracks), followers=len(followers), current_user=current_user, button=button, user_id=user_id, creator_id=creator_id)
+
 
 @app.route("/upload", methods=["GET", "POST"])
 @login_required
@@ -356,12 +364,12 @@ def add_number():
         playlist = request.form.get("playlist")
 
         if not playlist:
-            return render_template("apology.html", message = "you did not correctly specifiy to which playlist you'd like to upload.")
+            return render_template("apology.html", message="you did not correctly specifiy to which playlist you'd like to upload.")
 
         link = request.form.get("link")
 
         if not link_check(link):
-            return render_template("apology.html", message = "the link you posted doesn't seem to meet our requirements, try generating a link using the share feature on YouTube.")
+            return render_template("apology.html", message="the link you posted doesn't seem to meet our requirements, try generating a link using the share feature on YouTube.")
 
         link_desc = request.form.get("link_desc")
 
@@ -380,10 +388,10 @@ def check_playlist_search():
     """Check username availability"""
 
     # get search input from user name it q
-    q = request.args.get("playlist")
+    search_input = request.args.get("playlist")
 
-    # search for the users input with helper function search1
-    result_description, result_playlist = search1(q)
+    # search for the users input with helper function
+    result_description, result_playlist = search_helper(search_input)
 
     # Ensure that input exists
     if len(result_description) == 0 and len(result_playlist) == 0:
@@ -391,14 +399,6 @@ def check_playlist_search():
 
     else:
         return jsonify(True)
-
-
-
-@app.route("/results")
-def results():
-    # shows the results based on the users input in search
-    # return to a specific playlist profile, from here the user can follow this playlist, so returns to /playlist_profile
-    return None
 
 
 @app.route("/follow")
@@ -410,7 +410,8 @@ def follow():
     user_id = session["user_id"]
 
     if check_following(playlist_id, user_id):
-        db.execute("DELETE FROM playlist_users WHERE playlist_id = :playlist_id AND user_id = :user_id", playlist_id=playlist_id, user_id=session["user_id"])
+        db.execute("DELETE FROM playlist_users WHERE playlist_id = :playlist_id AND user_id = :user_id",
+                   playlist_id=playlist_id, user_id=session["user_id"])
         return jsonify(False)
 
     else:
@@ -418,31 +419,33 @@ def follow():
                    user_id=session["user_id"], playlist_id=playlist_id)
         return jsonify(True)
 
-    return render_template("apology.html")
 
 @app.route("/playlists")
 @login_required
 def playlists():
     """Allow users to view the playlists they're following"""
 
-    #
+    # find all playlists the user is following
     ids = []
     playlist_id = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=session["user_id"])
 
-    #???
+    # loop over all existing playlists and create a list to send to playlists.html
     for playlist_id in playlist_id:
-        test = []
-        playlist_name = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id", playlist_id=playlist_id["playlist_id"])
-        test.append(playlist_name[0]["playlist_name"])
-        test.append(playlist_id)
-        ids.append(test)
+        all_playlists = []
+        playlist_name = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id",
+                                   playlist_id=playlist_id["playlist_id"])
+        all_playlists.append(playlist_name[0]["playlist_name"])
+        all_playlists.append(playlist_id)
+        ids.append(all_playlists)
 
-    return render_template("playlists.html", ids=ids, playlist_id=playlist_id)
+    return render_template("playlists.html", ids=ids)
+
 
 @app.route("/profile", methods=["GET"])
 def profile():
     """Allow users to view their own or somebody else's profile"""
 
+    # determine requested user id based on if a link was used, or a loggin in user wants to see his own profile from the navbar
     user = request.args.get("username")
     if user:
         user_id = (db.execute("SELECT user_id FROM users WHERE username = :username", username=user))[0]["user_id"]
@@ -450,6 +453,7 @@ def profile():
     else:
         user_id = session["user_id"]
 
+    # gather all information needed to show on profile page
     name = db.execute("SELECT username FROM users WHERE user_id = :user_id", user_id=user_id)
     uploads = db.execute("SELECT link FROM tracks WHERE added_by = :added_by", added_by=user_id)
     playlists = db.execute("SELECT playlist_id FROM playlist_users WHERE user_id = :user_id", user_id=user_id)
@@ -463,42 +467,53 @@ def profile():
 @login_required
 def deletesong():
 
+    # gather all information needed to delete song
     track_id = request.args.get("track_id")
     user_id = session["user_id"]
     uploader = db.execute("SELECT added_by FROM tracks WHERE track_id = :track_id", track_id=track_id)
 
+    # extra check to make sure the user who wants to delete the song is original uploader, if so: delete song
     if int(user_id) == int(uploader[0]["added_by"]):
-        db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id = track_id)
-        db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id", track_id = track_id)
+        db.execute("DELETE FROM tracks WHERE track_id= :track_id", track_id=track_id)
+        db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id", track_id=track_id)
         return jsonify(True)
 
     else:
-        return jsonify(False)
+        return render_template("apology.html", message="Looks like you're not the original uploader of that song")
+
 
 @app.route("/deleteplaylist")
 @login_required
 def deleteplaylist():
 
+    # gather all information needed to delete song
     playlist_id = request.args.get("playlist_id")
     user_id = session["user_id"]
     creator = db.execute("SELECT creator_id FROM playlists WHERE playlist_id = :playlist_id", playlist_id=playlist_id)
 
+    # extra check to make sure the user who wants to delete the playlist is original creator, if so: delete playlist
     if not user_id == creator[0]["creator_id"]:
-        return render_template("apology.html", message = "you are not the creator of this playlist, therefore you're not allowed to delete it")
+        return render_template("apology.html", message="you are not the creator of this playlist, therefore you're not allowed to delete it")
 
     delete_playlist(playlist_id)
-    return redirect ("/playlists")
+    return redirect("/playlists")
 
-@app.route("/upvote")
+
+@app.route("/like")
 @login_required
-def upvote():
+def like():
+
+    # gather all required information
     track_id = request.args.get("track_id")
     user_id = session["user_id"]
 
+    # if user had already liked the song, unlike it
     if check_liked(user_id, track_id):
         db.execute("DELETE FROM users_likedtracks WHERE track_id = :track_id AND user_id= :user_id", track_id=track_id, user_id=user_id)
         db.execute("UPDATE tracks SET likes = likes - 1 WHERE track_id = :track_id", track_id=track_id)
         return jsonify(False)
+
+    # if user hasn't liked the song yet, like it
     else:
         db.execute("INSERT INTO users_likedtracks (track_id, user_id) VALUES (:track_id, :user_id)", track_id=track_id, user_id=user_id)
         db.execute("UPDATE tracks SET likes = likes + 1 WHERE track_id = :track_id", track_id=track_id)
@@ -508,7 +523,12 @@ def upvote():
 @app.route("/player", methods=["GET"])
 def player():
 
+    # gather all required information
     playlist_id = request.args.get("playlist_id")
+    playlist_name = db.execute("SELECT playlist_name FROM playlists WHERE playlist_id = :playlist_id",
+                               playlist_id=playlist_id)[0]["playlist_name"]
+
+    # refer to helper function to create list needed for player
     videos = (player_info(playlist_id))
 
-    return render_template("player.html", videos = videos)
+    return render_template("player.html", videos=videos, playlist_name=playlist_name)

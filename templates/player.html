@@ -17,8 +17,13 @@
             </h1>
         </div>
     {% else %}
-  <div align="center" id="player"></div>
-  <script src="//www.youtube.com/iframe_api"></script>
+        <p>
+            <h1 align = "center"><u>{{ playlist_name }}</u></h1>
+            <h5 align = "center"> Continuous player</h5>
+        </p>
+
+        <div align="center" id="player"></div>
+        <script src="//www.youtube.com/iframe_api"></script>
      {% endif %}
 </body>
 

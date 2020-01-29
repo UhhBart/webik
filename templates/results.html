@@ -22,39 +22,35 @@
         </div>
     {% else %}
 
-        <div align="center" class="form">
-
+        <div align="center" class="playlist">
+        <h6><u>Playlists found based on similair name</u></h6>
+        <br>
         <!--create an unordened list containing all followed playlists-->
         <ul>
         {% for result in result_playlist %}
             <h5 align="left">
-                Found based on playlist name
                 <li>
-                    <a href="/playlist_profile?id={{result[1]['playlist_id']}}">{{ result[0] }}</a>
+                    <a href="/playlist_profile?id={{result['playlist_id']}}">{{ result["playlist_name"] }}</a>
                 </li>
             </h5>
         {% endfor %}
         </ul>
-        <!--<ul>-->
-        <!--{% for id in result_playlist %}-->
-        <!--    <h5 align="left">-->
-        <!--        Found based on playlists name-->
-        <!--        <li>-->
-        <!--            <a href="/playlist_profile?id={{id[1]['playlist_id']}}">{{ id[0] }}</a>-->
-        <!--        </li>-->
-        <!--    </h5>-->
-        <!--{% endfor %}-->
-        <!--</ul>-->
+        </div>
+        <br><br>
+        <div align="center" class="playlist">
+        <h6><u>Playlists found based on similair desccription</u></h6>
+        <br>
+        <!--create an unordened list containing all followed playlists-->
         <ul>
-        {% for id in result_description %}
+        {% for result in result_description %}
             <h5 align="left">
-                Found based on description
                 <li>
-                    <a href="/playlist_profile?id={{id[1]['playlist_id']}}">{{ id[0] }}</a>
+                    <a href="/playlist_profile?id={{result['playlist_id']}}">{{ result["playlist_name"] }}</a>
                 </li>
             </h5>
         {% endfor %}
         </ul>
+
 
         </div>
     {% endif %}

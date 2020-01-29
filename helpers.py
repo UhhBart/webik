@@ -218,6 +218,7 @@ def player_info(playlist_id):
 
     return all_links
 
+
 def delete_playlist(playlist_id):
 
     # deleting playlists
@@ -235,15 +236,16 @@ def delete_playlist(playlist_id):
     # deleting tracks
     db.execute("DELETE FROM tracks WHERE playlist_id= :playlist_id", playlist_id = playlist_id)
 
-def search1(q):
+
+def search_helper(search_input):
 
     # make the search input into the a form that if it contains return true
-    s = "%" + q + "%"
+    keyword = "%" + search_input + "%"
 
     # search the database for the search input contains something of the playlist name
-    result_playlist = db.execute("SELECT * FROM playlists WHERE (playlist_name LIKE :q) ORDER BY playlist_name", q=s)
+    result_playlist = db.execute("SELECT * FROM playlists WHERE (playlist_name LIKE :keyword) ORDER BY playlist_name", keyword=keyword)
 
     # search the database for the search input contains something of the description
-    result_description = db.execute("SELECT * FROM playlists WHERE (description LIKE :q) ORDER BY description", q=s)
+    result_description = db.execute("SELECT * FROM playlists WHERE (description LIKE :keyword) ORDER BY description", keyword=keyword)
 
     return result_description, result_playlist

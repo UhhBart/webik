@@ -12,7 +12,7 @@
             <h1 align="center">Followed playlists</h1>
         </p>
     </div>
-
+    <br>
     <!--if user is not following playlists, redirect them to search page-->
     {% if not ids %}
         <div class = "form">
@@ -23,7 +23,7 @@
             </strong>
         </div>
     {% else %}
-        <div align="center" class="form">
+        <div align="center" class="playlist">
 
         <!--create an unordened list containing all followed playlists-->
         <ul>
