@@ -1,4 +1,8 @@
 # VibeCheck
+
+Link to video:
+https://youtu.be/ayy32HDvri0
+
 Developed by:
 * Bart van den Broek (12675407)
 * Martijn Schuurhuis (12404780)
